@@ -14,19 +14,19 @@ int main()
     std::cin >> nPeople;
     int maxPossibleGroups = nPeople / 2;
 
-
-    int maxGroups = nPeople/2;
+    int maxGroups = nPeople / 2;
     int minGroups;
     std::cin >> minGroups;
 
-    int maxGroupSize = nPeople / minGroups + (((nPeople % minGroups)==0) ? 0 : 1);
+    int maxGroupSize = nPeople / minGroups + (((nPeople % minGroups) == 0) ? 0 : 1);
 
     int minGroupSize = nPeople / maxGroups;
-    std::cout << std::endl << maxGroupSize << " " << minGroupSize << "\n\n";
+    std::cout << std::endl
+              << maxGroupSize << " " << minGroupSize << "\n\n";
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(0, 10);
+    std::uniform_int_distribution<> dis(-10, 10);
 
     for (int i = 0; i < nPeople; i++)
     {
@@ -141,6 +141,7 @@ int main()
         }
         model.add(sumRow <= maxGroupSize * activeGroups[i]);
         model.add(sumRow >= minGroupSize * activeGroups[i]);
+        
     }
 
     //Cada pessoa so pode estar em um grupo
@@ -164,20 +165,25 @@ int main()
                 model.add(edgeMatrix[k][i][j] <= groupMatrix[k][j]);
                 model.add(edgeMatrix[k][i][j] <= groupMatrix[k][i]);
                 model.add(activeGroups[k] >= edgeMatrix[k][i][j]);
+                IloExpr sumIJ(env);
+                sumIJ = groupMatrix[k][j] + groupMatrix[k][i] - 1;
+                model.add(edgeMatrix[k][i][j] >= sumIJ);
             }
         }
     }
+
+    
 
     for (int i = 0; i < maxGroups; i++)
     {
         for (int j = 0; j < nPeople; j++)
         {
-          //  activeGroups[i] 
-        } 
+            //  activeGroups[i]
+        }
     }
 
     IloExpr sumOfGroups(env);
-    for(int i = 0; i < maxGroups; i++)
+    for (int i = 0; i < maxGroups; i++)
     {
         sumOfGroups += activeGroups[i];
     }
@@ -225,9 +231,25 @@ int main()
 
     std::cout << "\n\n";
 
-    for(int i = 0; i < maxGroups; i++)
+    for (int i = 0; i < maxGroups; i++)
     {
         std::cout << clust.getValue(activeGroups[i]) << "\n";
+    }
+
+    std::cout << "\n\n";
+
+
+    for (int k = 0; k < maxGroups; k++)
+    {
+        for (int i = 0; i < nPeople; i++)
+        {
+            for (int j = 0; j < nPeople; j++)
+            {
+         //       std::cout << clust.getValue(edgeMatrix[k][i][j])<< " ";
+            }
+    //        std::cout << "\n";
+        }
+   //     std::cout << "\n\n";
     }
 
     clust.exportModel("modelo.lp");
