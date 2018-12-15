@@ -58,7 +58,7 @@ void solve(int n)
         IloExpr sumForwardDiagRow(env);
         IloExpr sumForwardDiagCol(env);
 
-        for (int j = k, i = 0; j < n - 1; j++, i++)
+        for (int j = k, i = 0; j < n; j++, i++)
         {
             sumForwardDiagRow += x[i][j];
             sumForwardDiagCol += x[j][i];
@@ -73,10 +73,10 @@ void solve(int n)
         IloExpr sumForwardDiagRow(env);
         IloExpr sumForwardDiagCol(env);
 
-        for (int j = k, i = 0; i > 0; j--, i++)
+        for (int j = k - 1, i = 0; j >= 0; j--, i++)
         {
             sumForwardDiagRow += x[i][j];
-            sumForwardDiagCol += x[j][i];
+            sumForwardDiagCol += x[i+1][j+1];
         }
 
         model.add(sumForwardDiagRow <= 1);
