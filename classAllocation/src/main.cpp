@@ -9,18 +9,40 @@
 
 int main()
 {
-    std::vector<std::vector<int>> turmaAula;
-    std::vector<int> turmaTamanho = {30, 30, 30};
+    std::vector<std::vector<int>> turmaAula = {{1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1}, {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1}};
+    std::vector<int> turmaTamanho = {30, 30};
+    std::vector<std::vector<std::vector<int>>> aulaDiaHorario;
 
-    turmaAula.push_back({1, 0, 1, 0, 0, 0});
-    turmaAula.push_back({0, 1, 0, 1, 0, 0});
-    turmaAula.push_back({0, 0, 0, 0, 1, 1});
+    //                           SEG        TER        QUA        QUI        SEX
+
+    aulaDiaHorario.push_back({{1, 0, 0}, {0, 0, 0}, {1, 0, 0}, {0, 0, 0}, {0, 0, 0}});
+    aulaDiaHorario.push_back({{0, 1, 0}, {0, 0, 0}, {0, 1, 0}, {0, 0, 0}, {0, 0, 0}});
+    aulaDiaHorario.push_back({{0, 0, 1}, {0, 0, 0}, {0, 0, 1}, {0, 0, 0}, {0, 0, 0}});
+
+    aulaDiaHorario.push_back({{0, 0, 0}, {1, 0, 0}, {0, 0, 0}, {1, 0, 0}, {0, 0, 0}});
+    aulaDiaHorario.push_back({{0, 0, 0}, {0, 1, 0}, {0, 0, 0}, {0, 1, 0}, {0, 0, 0}});
+    aulaDiaHorario.push_back({{0, 0, 0}, {0, 0, 1}, {0, 0, 0}, {0, 0, 1}, {0, 0, 0}});
+
+    aulaDiaHorario.push_back({{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {1, 1, 0}});
+    aulaDiaHorario.push_back({{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {1, 1, 0}});
+
+    aulaDiaHorario.push_back({{1, 0, 0}, {0, 0, 0}, {1, 0, 0}, {0, 0, 0}, {0, 0, 0}});
+    aulaDiaHorario.push_back({{0, 1, 0}, {0, 0, 0}, {0, 1, 0}, {0, 0, 0}, {0, 0, 0}});
+
+    aulaDiaHorario.push_back({{0, 0, 0}, {1, 0, 0}, {0, 0, 0}, {1, 0, 0}, {0, 0, 0}});
+    aulaDiaHorario.push_back({{0, 0, 0}, {0, 1, 0}, {0, 0, 0}, {0, 1, 0}, {0, 0, 0}});
+
+    int nHorarios = aulaDiaHorario[0][0].size();
+    int nDias = aulaDiaHorario[0].size();
 
     int nAulas = turmaAula[0].size();
     int nTurmas = turmaAula.size();
     int nSalas = nAulas;
 
-    std::vector<int> salaCapacidade = {30, 30, 30};
+    std::vector<int> salaCapacidade(nSalas, 30);
+    for(int i = 0; i < nSalas; i++);
+
+    salaCapacidade[0] = 60;
 
     IloEnv env;
     IloModel model(env);
@@ -28,33 +50,33 @@ int main()
     //Variaveis
 
     IloArray<IloBoolVarArray> salaAula(env, nSalas);
-    for(int i = 0; i < nSalas; i++)
+    for (int i = 0; i < nSalas; i++)
     {
         IloBoolVarArray v(env, nAulas);
         salaAula[i] = v;
-        for(int j = 0; j < nAulas; j++)
+        for (int j = 0; j < nAulas; j++)
         {
             model.add(salaAula[i][j]);
         }
     }
 
     IloArray<IloBoolVarArray> turmaSala(env, nTurmas);
-    for(int i = 0; i < nTurmas; i++)
+    for (int i = 0; i < nTurmas; i++)
     {
         IloBoolVarArray t(env, nSalas);
         turmaSala[i] = t;
-        for(int j = 0; j < nAulas; j++)
+        for (int j = 0; j < nAulas; j++)
         {
             model.add(turmaSala[i][j]);
         }
     }
 
     //Objetivo
-    
+
     IloExpr totalSum(env);
-    for(int i = 0; i < nTurmas; i++)
+    for (int i = 0; i < nTurmas; i++)
     {
-        for(int j = 0; j < nSalas; j++)
+        for (int j = 0; j < nSalas; j++)
         {
             totalSum += turmaSala[i][j];
         }
@@ -63,41 +85,58 @@ int main()
 
     //Restriçoes
 
-    for(int i = 0; i < nTurmas; i++)
+    for (int i = 0; i < nTurmas; i++)
     {
 
-        for(int j = 0; j < nSalas; j++)
+        for (int j = 0; j < nSalas; j++)
         {
             IloExpr sum(env);
-            for(int k = 0; k < nAulas; k++)
+            for (int k = 0; k < nAulas; k++)
             {
                 model.add(turmaSala[i][j] >= turmaAula[i][k] * salaAula[j][k]);
                 sum += turmaAula[i][k] * salaAula[j][k];
             }
             model.add(turmaSala[i][j] <= sum);
            // model.add(turmaTamanho[i] * turmaSala[i][j] <= salaCapacidade[j] );
-    
         }
     }
 
-    for(int j = 0; j < nSalas; j++)
+    for (int j = 0; j < nSalas; j++)
     {
         IloExpr sumTurmas(env);
-        for(int i = 0; i < nTurmas; i++)
+        for (int i = 0; i < nTurmas; i++)
         {
             sumTurmas += turmaTamanho[i] * turmaSala[i][j];
         }
         model.add(sumTurmas <= salaCapacidade[j]);
     }
 
-    for(int k = 0; k < nAulas; k++)
+    for (int k = 0; k < nAulas; k++)
     {
         IloExpr sum(env);
-            for(int j = 0; j < nSalas; j++)
-            {
-                sum += salaAula[j][k];
-            }
+        for (int j = 0; j < nSalas; j++)
+        {
+            sum += salaAula[j][k];
+        }
         model.add(sum == 1);
+    }
+
+    for (int k = 0; k < nAulas; k++)
+    {
+        for (int d = 0; d < nDias; d++)
+        {
+            for (int h = 0; h < nHorarios; h++)
+            {
+                IloExpr sumAulas(env);
+
+                for (int j = 0; j < nAulas; j++)
+                {
+                    sumAulas += aulaDiaHorario[j][d][h] * salaAula[k][j];
+                }
+
+                model.add(sumAulas <= 1);
+            }
+        }
     }
 
     //Soluçao
@@ -106,16 +145,18 @@ int main()
 
     cla.solve();
 
+    cla.exportModel("modelo.lp");
+
     std::cout << cla.getObjValue() << "\n\n";
 
-    for(int i = 0; i < nTurmas; i++)
+    for (int i = 0; i < nTurmas; i++)
     {
-        std::cout << "Turma " << i + 1 << " tem aulas nas salas: ";
-        for(int j = 0; j < nSalas; j++)
+        std::cout << "Turma " << i << " tem aulas nas salas: ";
+        for (int j = 0; j < nSalas; j++)
         {
-            if(cla.getValue(turmaSala[i][j]) > 0.9)
+            if (cla.getValue(turmaSala[i][j]) > 0.9)
             {
-                std::cout << j + 1 << " ";
+                std::cout << j << " ";
             }
             //std::cout << cla.getValue(turmaSala[i][j]) << '\t';
         }
@@ -124,16 +165,28 @@ int main()
 
     std::cout << "\n\n";
 
-    for(int i = 0; i < nSalas; i++)
+    for (int i = 0; i < nSalas; i++)
     {
-        for(int j = 0; j < nAulas; j++)
+        for (int j = 0; j < nAulas; j++)
         {
             std::cout << cla.getValue(salaAula[i][j]) << '\t';
         }
         std::cout << "\n";
     }
 
+    std::cout << "\n\n";
 
-
+    for(int i = 0; i < nAulas; i++)
+    {
+        std::cout << "Aula " << i << " na sala: "; 
+        for(int j = 0; j < nSalas; j++)
+        {
+            if(cla.getValue(salaAula[j][i]) > 0.9)
+            {
+                std::cout << j << " ";
+            }
+        }
+        std::cout << "\n";
+    }
 
 }
