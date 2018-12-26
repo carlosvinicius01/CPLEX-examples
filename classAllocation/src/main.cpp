@@ -10,7 +10,7 @@
 int main()
 {
     std::vector<std::vector<int>> turmaAula = {{1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1}, {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1}};
-    std::vector<int> turmaTamanho = {30, 30};
+    std::vector<int> turmaTamanho = {10, 10};
     std::vector<std::vector<std::vector<int>>> aulaDiaHorario;
 
     //                           SEG        TER        QUA        QUI        SEX
@@ -37,12 +37,10 @@ int main()
 
     int nAulas = turmaAula[0].size();
     int nTurmas = turmaAula.size();
-    int nSalas = nAulas;
+    int nSalas = 2;
 
     std::vector<int> salaCapacidade(nSalas, 30);
-    for(int i = 0; i < nSalas; i++);
-
-    salaCapacidade[0] = 60;
+    salaCapacidade[0] = 30;
 
     IloEnv env;
     IloModel model(env);
@@ -65,11 +63,23 @@ int main()
     {
         IloBoolVarArray t(env, nSalas);
         turmaSala[i] = t;
-        for (int j = 0; j < nAulas; j++)
+        for (int j = 0; j < nSalas; j++)
         {
             model.add(turmaSala[i][j]);
         }
     }
+
+    IloNumArray lb(env, nTurmas);
+    IloNumArray ub(env, nTurmas);
+
+    for(int i = 0; i < nTurmas; i++)
+    {
+        lb[i] = 0;
+        ub[i] = IloInfinity;
+    }
+
+    IloNumVarArray c(env, lb, ub, ILOINT);
+    
 
     //Objetivo
 
@@ -121,7 +131,7 @@ int main()
         model.add(sum == 1);
     }
 
-    for (int k = 0; k < nAulas; k++)
+    for (int j = 0; j < nSalas; j++)
     {
         for (int d = 0; d < nDias; d++)
         {
@@ -129,9 +139,9 @@ int main()
             {
                 IloExpr sumAulas(env);
 
-                for (int j = 0; j < nAulas; j++)
+                for (int k = 0; k < nAulas; k++)
                 {
-                    sumAulas += aulaDiaHorario[j][d][h] * salaAula[k][j];
+                    sumAulas += aulaDiaHorario[k][d][h] * salaAula[j][k];
                 }
 
                 model.add(sumAulas <= 1);
