@@ -5,20 +5,67 @@
 
 #include <vector>
 #include <random>
+
+#include <time.h> 
 #include <cmath>
+
+#include "Data.hpp"
+
+
+
+void solve(Data data);
 
 int main()
 {
+    Data data;
+    
+    /* data.H = {{0,1}, {2,3}, {4,5,6}};
+    data.TChH = {{}, {}, {0}, {1}, {},{},{}};
 
-    std::vector<std::vector<int>> H = {{0,1}, {2,3}, {4,5,6}};
-    std::vector<std::vector<int>> TChH = {{}, {}, {0}, {1}, {},{},{}};
+    data.nSalas = 2;
+    data.nAulas = 7;
+    data.nTurmas = data.H.size();
 
-    int nSalas = 2;
-    int nAulas = 7;
+    data.Q = {60, 30};
+    data.D = {30,60,30}; */
+
+    srand(time(NULL));
+
+    std::vector<std::vector<int>> turmaAula;
+    int nAulas = 1000;
+    int nTurmas = 100;
+
+    for(int i = 0; i < nAulas; i++)
+    {   
+        std::vector<int> v;
+        v.push_back(i);
+        v.push_back(rand() % nTurmas);
+        turmaAula.push_back(v);
+
+        std::cout << v[0] << " " << v[1] << "\n";
+    }
+
+    
+
+
+
+
+    // solve(data);
+
+
+}
+
+void solve(Data data)
+{
+    std::vector<std::vector<int>> H = data.H;
+    std::vector<std::vector<int>> TChH = data.TChH;
+
+    int nSalas = data.nSalas;
+    int nAulas = data.nAulas;
     int nTurmas = H.size();
 
-    std::vector<int> Q = {60, 30};
-    std::vector<int> D = {30,60,30};
+    std::vector<int> Q = data.Q;
+    std::vector<int> D = data.D;
 
     IloEnv env;
     IloModel model(env);
@@ -78,7 +125,7 @@ int main()
             {
                 for (int k : TChH[i])
                 {
-                    model.add(x[i][j] + x[k][j] <= 1); ////////////q
+                    model.add(x[i][j] + x[k][j] <= 1);
                 }
             }
         }
