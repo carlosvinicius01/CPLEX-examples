@@ -32,22 +32,27 @@ int main()
     srand(time(NULL));
 
     std::vector<std::vector<int>> turmaAula;
-    int nAulas = 1000;
-    int nTurmas = 100;
+    int nAulas = 100;
+    int nTurmas = 10;
+
+    data.H = std::vector<std::vector<int>>(nTurmas);
 
     for(int i = 0; i < nAulas; i++)
     {   
         std::vector<int> v;
-        v.push_back(i);
-        v.push_back(rand() % nTurmas);
-        turmaAula.push_back(v);
+        //v.push_back(i);
+        //v.push_back(rand() % nTurmas);
+        //turmaAula.push_back(v);
 
-        std::cout << v[0] << " " << v[1] << "\n";
+        data.H[rand()%nTurmas].push_back(i);
+
+//        std::cout << v[0] << " " << v[1] << "\n";
     }
 
-    
-
-
+    for(int i = 0; i < nTurmas;i++)
+    {
+        data.printAulasTurma(i);
+    }   
 
 
     // solve(data);
