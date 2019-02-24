@@ -9,13 +9,19 @@ class Data
 
         std::vector<int> Q, D;
 
-        void printAulasTurma(int i)
+        void printH(int i)
         {
             for(int j = 0; j < H[i].size(); j++)
             {
                 std::cout << H[i][j] << " ";
             }
-            std::cout << "\n";
         }
 
+        void printTChH(int i)
+        {
+            for(int j = 0; j < TChH[i].size(); j++)
+            {
+                std::cout << TChH[i][j] << " ";
+            }
+        }
 };

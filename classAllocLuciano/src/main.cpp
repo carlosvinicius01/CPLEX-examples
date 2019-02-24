@@ -32,30 +32,82 @@ int main()
     srand(time(NULL));
 
     std::vector<std::vector<int>> turmaAula;
-    int nAulas = 100;
+    int nAulas = 40;
     int nTurmas = 10;
+    int nHorarios = 50;
+    int nSalas = 40;
 
     data.H = std::vector<std::vector<int>>(nTurmas);
+
+    // Aulas i das turmas t
 
     for(int i = 0; i < nAulas; i++)
     {   
         std::vector<int> v;
-        //v.push_back(i);
-        //v.push_back(rand() % nTurmas);
-        //turmaAula.push_back(v);
-
         data.H[rand()%nTurmas].push_back(i);
-
-//        std::cout << v[0] << " " << v[1] << "\n";
     }
 
-    for(int i = 0; i < nTurmas;i++)
+    /* for(int i = 0; i < nTurmas;i++)
     {
         data.printAulasTurma(i);
-    }   
+    }   */
+
+    // Horarios das turmas
+
+    std::vector<std::vector<int>> horarioAulas(nHorarios);
+
+    for(int i = 0; i < data.H.size(); i++)
+    {
+        for(int j = 0; j < data.H[i].size();j++)
+        {
+            horarioAulas[rand()%nHorarios].push_back(data.H[i][j]);
+        }
+    }
+
+    /*for(int i = 0; i < horarioAulas.size();i++)
+    {
+        for(int j = 0; j < horarioAulas[i].size();j++)
+        {
+            std::cout << horarioAulas[i][j] << " "; 
+        }
+        std::cout << std::endl;
+    } */
+
+    data.TChH = std::vector<std::vector<int>>(nAulas);
+    
+    for(int i = 0; i < horarioAulas.size(); i++)
+    {
+        for(int j : horarioAulas[i])
+        {
+            for(int k = 0; k < horarioAulas[i].size(); k++)
+            {
+                if(horarioAulas[i][k]==j)
+                    continue;
+                data.TChH[j].push_back(horarioAulas[i][k]);
+            }
+        }
+    }
+
+    data.nSalas = nSalas;
+    data.nAulas = nAulas;
+    data.nTurmas = nTurmas;
+
+    int minTurma = 30, maxTurma = 60;
+
+    for(int i = 0; i < nSalas; i++)
+    {
+        data.Q.push_back(minTurma + rand()%(maxTurma-minTurma));
+    }
+
+    for(int i = 0; i < nTurmas; i++)
+    {
+        data.D.push_back(minTurma + rand()%(maxTurma-minTurma));
+    }
+
+    
 
 
-    // solve(data);
+    solve(data);
 
 
 }
