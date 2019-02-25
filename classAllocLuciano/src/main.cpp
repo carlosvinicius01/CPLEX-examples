@@ -34,6 +34,12 @@ int main()
 
     genData(data);
 
+    for(int i = 0; i < data.hA.size(); i++)
+    {
+        data.printhA(i);
+        std::cout << "\n";
+    }
+
     solveC(data);
 }
 

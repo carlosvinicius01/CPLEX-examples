@@ -25,4 +25,13 @@ class Data
             std::cout << TChH[i][j] << " ";
         }
     }
+
+    void printhA(int i)
+    {
+        for (int j = 0; j < hA[i].size(); j++)
+        {
+            std::cout << hA[i][j] << " ";
+        }
+    }
+
 };
