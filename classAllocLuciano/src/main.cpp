@@ -34,7 +34,7 @@ int main()
 
     genData(data);
 
-    solveL(data);
+    solveC(data);
 }
 
 void solveL(Data data)
@@ -165,6 +165,8 @@ void solveC(Data data)
 
     /////////Conversao de dados///////////
 
+    std::vector<std::vector<int>> turmaAula;
+
     for (std::vector<int> i : data.H)
     {
         std::vector<int> v(data.nAulas, 0);
@@ -176,14 +178,31 @@ void solveC(Data data)
         turmaAula.push_back(v);
     }
 
-    salaCapacidade = data.Q;
-    turmaTamanho = data.D;
+    std::vector<int> salaCapacidade = data.Q;
+    std::vector<int> turmaTamanho = data.D;
 
     int nAulas = data.nAulas;
     int nTurmas = data.nTurmas;
     int nSalas = data.nSalas;
+    int nHorarios = data.hA.size();
 
+    int nDias = 1;
+
+    std::vector<std::vector<std::vector<int>>> aulaDiaHorario(nAulas, std::vector<std::vector<int>>(nDias, std::vector<int>(nHorarios, 0)));
+
+    for (int k = 0; k < nDias; k++)
+    {
+        for (int j = 0; j < nHorarios; j++)
+        {
+            for (int i : data.hA[j])
+            {
+                aulaDiaHorario[j][k][i] = 1;
+            }
+        }
+    }
     //////////////////////////////////////
+
+
 
     /* std::vector<std::vector<int>> turmaAula = {{1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1}};
     std::vector<int> turmaTamanho = {30, 30, 30};
