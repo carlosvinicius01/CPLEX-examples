@@ -20,6 +20,7 @@ void solveC(Data data);
 int main(int argc, char *argv[])
 {
     Data data;
+    srand(time(NULL));
 
     /* data.H = {{0,1}, {2,3}, {4,5,6}};
     data.TChH = {{}, {}, {0}, {1}, {},{},{}};
@@ -29,14 +30,11 @@ int main(int argc, char *argv[])
     data.nTurmas = data.H.size();
 
     data.Q = {60, 30};
-    data.D = {30,60,30}; */
-
-    
-
-    genData(data);
+    data.D = {30,60,30}; */  
 
     for(int i = 0; i < atoi(argv[1]); i++)
     {
+        genData(data);
         argv[2][0] == '0' ? solveC(data):solveL(data); 
     }
         
@@ -167,10 +165,16 @@ void solveL(Data data)
 
 void solveC(Data data)
 {
-
     /////////Conversao de dados///////////
 
     std::vector<std::vector<int>> turmaAula;
+
+    int nAulas = data.nAulas;
+    int nTurmas = data.nTurmas;
+    int nSalas = data.nSalas;
+    int nHorarios = data.hA.size();
+
+
 
     for (std::vector<int> i : data.H)
     {
@@ -186,10 +190,7 @@ void solveC(Data data)
     std::vector<int> salaCapacidade = data.Q;
     std::vector<int> turmaTamanho = data.D;
 
-    int nAulas = data.nAulas;
-    int nTurmas = data.nTurmas;
-    int nSalas = data.nSalas;
-    int nHorarios = data.hA.size();
+
 
     int nDias = 1;
 
@@ -201,10 +202,14 @@ void solveC(Data data)
         {
             for (int i : data.hA[j])
             {
-                aulaDiaHorario[j][k][i] = 1;
+                aulaDiaHorario[i][k][j] = 1;
             }
         }
     }
+
+
+
+
     //////////////////////////////////////
 
     /* std::vector<std::vector<int>> turmaAula = {{1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1}};
@@ -239,6 +244,8 @@ void solveC(Data data)
 
     std::vector<int> salaCapacidade(nSalas, 30);
     salaCapacidade[0] = 90; */
+
+
 
     IloEnv env;
     IloModel model(env);
@@ -415,9 +422,10 @@ void solveC(Data data)
 
     cla.solve();
 
-    cla.exportModel("modelo.lp");
+    //cla.exportModel("modelo.lp");
 
-    std::cout << cla.getObjValue() << "\n\n";
+    std::cout << cla.getObjValue() << "\n";
+    std::cout << cla.getStatus() << "\n\n";
 /*
     for (int i = 0; i < nTurmas; i++)
     {

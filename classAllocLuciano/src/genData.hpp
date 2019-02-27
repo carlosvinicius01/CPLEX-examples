@@ -8,6 +8,8 @@ int randRange(int min, int max)
     return rand()%(max - min + 1) + min;
 }
 
+
+
 bool isInVec(int i, std::vector<int> v)
 {
     for(int j : v)
@@ -47,16 +49,25 @@ std::vector<int> randPermutation(int a, int b)
     return w;
 }
 
+std::vector<int> randVec(int a, int b, int c)
+{
+    std::vector<int> v = randPermutation(a,b);
+    while(v.size() > c)
+    {
+        v.erase(v.begin());
+    }
+    return v;
+}
+
 void genData(Data &data)
 {
 
-    srand(time(NULL));
-
+    
     std::vector<std::vector<int>> turmaAula;
-    int nAulas = 30;
-    int nTurmas = 15;
-    int nHorarios = 30;
-    int nSalas = 100;
+    int nAulas = 200;
+    int nTurmas = 10;
+    int nHorarios = 20;
+    int nSalas = 20;
 
 
     int minAulaPorTurma = 5;
@@ -70,7 +81,7 @@ void genData(Data &data)
 
     for (int i = 0; i < nSalas; i++)
     {
-        data.Q.push_back(maxTurma);
+        data.Q.push_back(randRange(minTurma, maxTurma));
     }
 
     {
@@ -117,11 +128,12 @@ void genData(Data &data)
             for(std::vector<int> t : data.H)
                 {
                     std::vector<int> v = randPermutation(0, nHorarios);
-                    v.erase(v.begin()+t.size(), v.end());
-                    
+
+                    //v.erase(v.begin()+t.size(), v.end());
+
                     for(int i = 0; i < t.size(); i++)
                     {
-                        horarioAulas[v[c]].push_back(t[i]);
+                        horarioAulas[v[i]].push_back(t[i]);
                         c++;
                     }
                 }
