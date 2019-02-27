@@ -11,6 +11,33 @@
 
 #include "Data.hpp"
 
+bool isInVec(int i, std::vector<int> v)
+{
+    for(int j : v)
+    {
+        if(j==i)
+            return true;
+    }
+    return false;
+}
+
+std::vector<int> randPermutation(int a, int b)
+{
+    std::vector<int> v(b - a), w;
+    for (int i = 0; i < b - a; i++)
+    {
+        v[i] = i;
+    }
+    while (!v.empty())
+    {
+        int n = rand() % v.size();
+        w.push_back(v[n]);
+        v.erase(v.begin() + n);
+    }
+
+    return w;
+}
+
 void solveL(Data data);
 void solveC(Data data);
 
@@ -34,13 +61,7 @@ int main()
 
     genData(data);
 
-    for(int i = 0; i < data.hA.size(); i++)
-    {
-        data.printhA(i);
-        std::cout << "\n";
-    }
-
-    solveC(data);
+    solveL(data);
 }
 
 void solveL(Data data)
@@ -207,8 +228,6 @@ void solveC(Data data)
         }
     }
     //////////////////////////////////////
-
-
 
     /* std::vector<std::vector<int>> turmaAula = {{1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1}};
     std::vector<int> turmaTamanho = {30, 30, 30};
@@ -491,13 +510,14 @@ void solveC(Data data)
 
 void genData(Data &data)
 {
+
     srand(time(NULL));
 
     std::vector<std::vector<int>> turmaAula;
     int nAulas = 100;
     int nTurmas = 10;
-    int nHorarios = 50;
-    int nSalas = 40;
+    int nHorarios = 10;
+    int nSalas =100;
 
     data.H = std::vector<std::vector<int>>(nTurmas);
 
@@ -513,14 +533,30 @@ void genData(Data &data)
 
     std::vector<std::vector<int>> horarioAulas(nHorarios);
 
-    for (int i = 0; i < data.H.size(); i++)
     {
-        for (int j = 0; j < data.H[i].size(); j++)
+        for (int i = 0; i < data.H.size(); i++)
         {
-            horarioAulas[rand() % nHorarios].push_back(data.H[i][j]);
+            if (data.H[i].size() > 0)
+            {
+                std::vector<int> v;
+                
+                for (int j = 0; j < data.H[i].size(); j++)
+                {
+                    int a = rand()%nHorarios;
+                    if(j > 0)
+                    {
+                        while(isInVec(a,v))
+                        {
+                              a = rand()%nHorarios;
+                        }
+                    }
+                    horarioAulas[a].push_back(data.H[i][j]);
+                    v.push_back(a);
+                }
+            }
+            else continue;
         }
     }
-
     data.hA = horarioAulas;
 
     /*for(int i = 0; i < horarioAulas.size();i++)
@@ -555,14 +591,14 @@ void genData(Data &data)
 
     for (int i = 0; i < nSalas; i++)
     {
-        data.Q.push_back(minTurma + rand() % (maxTurma - minTurma));
+        data.Q.push_back(maxTurma);
     }
 
     {
-        int y = min({1, 2, 3});
+        int y = min(data.Q);
         for (int i = 0; i < nTurmas; i++)
         {
-            data.D.push_back(y + rand() % (maxTurma - y));
+            data.D.push_back(minTurma + rand() % (maxTurma - minTurma));
         }
     }
 }
