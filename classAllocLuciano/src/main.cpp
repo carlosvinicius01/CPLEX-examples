@@ -10,42 +10,14 @@
 #include <cmath>
 
 #include "Data.hpp"
+#include "genData.hpp"
 
-bool isInVec(int i, std::vector<int> v)
-{
-    for(int j : v)
-    {
-        if(j==i)
-            return true;
-    }
-    return false;
-}
-
-std::vector<int> randPermutation(int a, int b)
-{
-    std::vector<int> v(b - a), w;
-    for (int i = 0; i < b - a; i++)
-    {
-        v[i] = i;
-    }
-    while (!v.empty())
-    {
-        int n = rand() % v.size();
-        w.push_back(v[n]);
-        v.erase(v.begin() + n);
-    }
-
-    return w;
-}
 
 void solveL(Data data);
 void solveC(Data data);
 
-void genData(Data &data);
 
-int min(std::vector<int> v);
-
-int main()
+int main(int argc, char *argv[])
 {
     Data data;
 
@@ -59,9 +31,15 @@ int main()
     data.Q = {60, 30};
     data.D = {30,60,30}; */
 
+    
+
     genData(data);
 
-    solveL(data);
+    for(int i = 0; i < atoi(argv[1]); i++)
+    {
+        argv[2][0] == '0' ? solveC(data):solveL(data); 
+    }
+        
 }
 
 void solveL(Data data)
@@ -358,11 +336,11 @@ void solveC(Data data)
                 model.add(aux[i][c] <= turmaSala[i][m]);
                 model.add(aux[i][c] >= turmaSala[i][m] + turmaSala[i][n] - 1);
 
-                std::cout << m << n << std::endl;
+               // std::cout << m << n << std::endl;
 
                 c++;
             }
-            std::cout << "\n";
+            //std::cout << "\n";
         }
     }
 
@@ -440,7 +418,7 @@ void solveC(Data data)
     cla.exportModel("modelo.lp");
 
     std::cout << cla.getObjValue() << "\n\n";
-
+/*
     for (int i = 0; i < nTurmas; i++)
     {
         std::cout << "Turma " << i << " tem aulas nas salas: ";
@@ -506,111 +484,6 @@ void solveC(Data data)
     {
         std::cout << cla.getValue(y[i]) << std::endl;
     }
+    */
 }
 
-void genData(Data &data)
-{
-
-    srand(time(NULL));
-
-    std::vector<std::vector<int>> turmaAula;
-    int nAulas = 100;
-    int nTurmas = 10;
-    int nHorarios = 10;
-    int nSalas =100;
-
-    data.H = std::vector<std::vector<int>>(nTurmas);
-
-    // Aulas i das turmas t
-
-    for (int i = 0; i < nAulas; i++)
-    {
-        std::vector<int> v;
-        data.H[rand() % nTurmas].push_back(i);
-    }
-
-    // Horarios das turmas
-
-    std::vector<std::vector<int>> horarioAulas(nHorarios);
-
-    {
-        for (int i = 0; i < data.H.size(); i++)
-        {
-            if (data.H[i].size() > 0)
-            {
-                std::vector<int> v;
-                
-                for (int j = 0; j < data.H[i].size(); j++)
-                {
-                    int a = rand()%nHorarios;
-                    if(j > 0)
-                    {
-                        while(isInVec(a,v))
-                        {
-                              a = rand()%nHorarios;
-                        }
-                    }
-                    horarioAulas[a].push_back(data.H[i][j]);
-                    v.push_back(a);
-                }
-            }
-            else continue;
-        }
-    }
-    data.hA = horarioAulas;
-
-    /*for(int i = 0; i < horarioAulas.size();i++)
-    {
-        for(int j = 0; j < horarioAulas[i].size();j++)
-        {
-            std::cout << horarioAulas[i][j] << " "; 
-        }
-        std::cout << std::endl;
-    } */
-
-    data.TChH = std::vector<std::vector<int>>(nAulas);
-
-    for (int i = 0; i < horarioAulas.size(); i++)
-    {
-        for (int j : horarioAulas[i])
-        {
-            for (int k = 0; k < horarioAulas[i].size(); k++)
-            {
-                if (horarioAulas[i][k] == j)
-                    continue;
-                data.TChH[j].push_back(horarioAulas[i][k]);
-            }
-        }
-    }
-
-    data.nSalas = nSalas;
-    data.nAulas = nAulas;
-    data.nTurmas = nTurmas;
-
-    int minTurma = 30, maxTurma = 60;
-
-    for (int i = 0; i < nSalas; i++)
-    {
-        data.Q.push_back(maxTurma);
-    }
-
-    {
-        int y = min(data.Q);
-        for (int i = 0; i < nTurmas; i++)
-        {
-            data.D.push_back(minTurma + rand() % (maxTurma - minTurma));
-        }
-    }
-}
-
-int min(std::vector<int> v)
-{
-    int y = v[0];
-    for (int x : v)
-    {
-        if (x < y)
-            y = x;
-    }
-
-    return y;
-}
