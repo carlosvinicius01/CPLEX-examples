@@ -12,32 +12,37 @@
 #include "Data.hpp"
 #include "genData.hpp"
 
-
 void solveL(Data data);
 void solveC(Data data);
-
 
 int main(int argc, char *argv[])
 {
     Data data;
     srand(time(NULL));
 
-    /* data.H = {{0,1}, {2,3}, {4,5,6}};
-    data.TChH = {{}, {}, {0}, {1}, {},{},{}};
+    data.H = {{0,1}, {2}, {3}};
+    data.TChH = {{3},{2},{1},{0}};
+    data.hA = {{0,3},{1,2}};
 
     data.nSalas = 2;
-    data.nAulas = 7;
+    data.nAulas = 4;
     data.nTurmas = data.H.size();
 
     data.Q = {60, 30};
-    data.D = {30,60,30}; */  
+    data.D = {30, 60, 30};
 
-    for(int i = 0; i < atoi(argv[1]); i++)
+    for (int i = 0; i < atoi(argv[1]); i++)
     {
-        genData(data);
-        argv[2][0] == '0' ? solveC(data):solveL(data); 
+        //genData(data);
+        if (argv[2][0] == '0' || argv[2][0] == '2')
+        {
+            solveC(data);
+        }
+        if (argv[2][0] == '1' || argv[2][0] == '2')
+        {
+            solveL(data);
+        }
     }
-        
 }
 
 void solveL(Data data)
@@ -147,24 +152,17 @@ void solveL(Data data)
     //Soluçao
 
     IloCplex cla(model);
+    cla.exportModel("MODELO.lp");
 
-    IloNum t = cla.getCplexTime();
+    cla.setOut(env.getNullStream());
 
     cla.solve();
     std::cout << cla.getObjValue() << "\n";
-
-    /* for (int i = 0; i < nAulas; i++)
-    {
-        for (int j = 0; j < nSalas; j++)
-        {
-            std::cout << (cla.getValue(x[i][j]) > 0.9 ? 1 : 0) << " ";
-        }
-        std::cout << "\n";
-    } */
+    std::cout << cla.getStatus() << "\n\n";
 }
 
 void solveC(Data data)
-{
+{/*
     /////////Conversao de dados///////////
 
     std::vector<std::vector<int>> turmaAula;
@@ -173,8 +171,6 @@ void solveC(Data data)
     int nTurmas = data.nTurmas;
     int nSalas = data.nSalas;
     int nHorarios = data.hA.size();
-
-
 
     for (std::vector<int> i : data.H)
     {
@@ -189,8 +185,6 @@ void solveC(Data data)
 
     std::vector<int> salaCapacidade = data.Q;
     std::vector<int> turmaTamanho = data.D;
-
-
 
     int nDias = 1;
 
@@ -207,45 +201,69 @@ void solveC(Data data)
         }
     }
 
-
-
-
     //////////////////////////////////////
 
-    /* std::vector<std::vector<int>> turmaAula = {{1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1}};
-    std::vector<int> turmaTamanho = {30, 30, 30};
-    std::vector<std::vector<std::vector<int>>> aulaDiaHorario;
+    for (std::vector<std::vector<int>> i : aulaDiaHorario)
+    {
+        for (std::vector<int> j : i)
+        {
+            for (int k : j)
+            {
+                std::cout << k << " ";
+            }
+            std::cout << "\n";
+        }
+        //std::cout << "\n";
+    }
 
-    //                           SEG        TER        QUA        QUI        SEX
+    std::cout << "\n";
 
-    aulaDiaHorario.push_back({{1, 0, 0}, {0, 0, 0}, {1, 0, 0}, {0, 0, 0}, {0, 0, 0}});
-    aulaDiaHorario.push_back({{0, 1, 0}, {0, 0, 0}, {0, 1, 0}, {0, 0, 0}, {0, 0, 0}});
-    aulaDiaHorario.push_back({{0, 0, 1}, {0, 0, 0}, {0, 0, 1}, {0, 0, 0}, {0, 0, 0}});
+    for (std::vector<int> i : turmaAula)
+    {
+        for (int j : i)
+        {
+            std::cout << j << " ";
+        }
+        std::cout << "\n";
+    }
 
-    aulaDiaHorario.push_back({{0, 0, 0}, {1, 0, 0}, {0, 0, 0}, {1, 0, 0}, {0, 0, 0}});
-    aulaDiaHorario.push_back({{0, 0, 0}, {0, 1, 0}, {0, 0, 0}, {0, 1, 0}, {0, 0, 0}});
-    aulaDiaHorario.push_back({{0, 0, 0}, {0, 0, 1}, {0, 0, 0}, {0, 0, 1}, {0, 0, 0}});
+    for (int i = 0; i < turmaTamanho.size(); i++)
+    {
+        std::cout << turmaTamanho[i] << " ";
+    }
 
-    aulaDiaHorario.push_back({{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {1, 1, 0}});
-    aulaDiaHorario.push_back({{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {1, 1, 0}});
+    std::cout << "\n";
 
-    aulaDiaHorario.push_back({{1, 0, 0}, {0, 0, 0}, {1, 0, 0}, {0, 0, 0}, {0, 0, 0}});
-    aulaDiaHorario.push_back({{0, 1, 0}, {0, 0, 0}, {0, 1, 0}, {0, 0, 0}, {0, 0, 0}});
+    for (int i = 0; i < salaCapacidade.size(); i++)
+    {
+        std::cout << salaCapacidade[i] << " ";
+    }
 
-    aulaDiaHorario.push_back({{0, 0, 0}, {1, 0, 0}, {0, 0, 0}, {1, 0, 0}, {0, 0, 0}});
-    aulaDiaHorario.push_back({{0, 0, 0}, {0, 1, 0}, {0, 0, 0}, {0, 1, 0}, {0, 0, 0}});
+    std::cout << "\n";
+
+    //////////////////////////////
+
+    */
+   
+   
+    std::vector<std::vector<int>> turmaAula = {{1,1,0,0}, {0,0,1,0}, {0,0,0,1}};
+    std::vector<std::vector<std::vector<int>>> aulaDiaHorario; 
+
+    aulaDiaHorario.push_back({{1, 0}});
+    aulaDiaHorario.push_back({{0, 1}});
+    aulaDiaHorario.push_back({{0, 1}});
+    aulaDiaHorario.push_back({{1, 0}});
+
 
     int nHorarios = aulaDiaHorario[0][0].size();
     int nDias = aulaDiaHorario[0].size();
 
     int nAulas = turmaAula[0].size();
     int nTurmas = turmaAula.size();
-    int nSalas = 5;
-
-    std::vector<int> salaCapacidade(nSalas, 30);
-    salaCapacidade[0] = 90; */
-
-
+    int nSalas = 2;
+    
+    std::vector<int> turmaTamanho = {30, 60, 30};
+    std::vector<int> salaCapacidade = {60,30};
 
     IloEnv env;
     IloModel model(env);
@@ -259,6 +277,9 @@ void solveC(Data data)
         salaAula[i] = v;
         for (int j = 0; j < nAulas; j++)
         {
+            char buffer[50];
+            sprintf(buffer, "X%d,%d", i, j);
+            salaAula[i][j].setName(buffer);
             model.add(salaAula[i][j]);
         }
     }
@@ -270,6 +291,9 @@ void solveC(Data data)
         turmaSala[i] = t;
         for (int j = 0; j < nSalas; j++)
         {
+            char buffer[50];
+            sprintf(buffer, "b%d,%d", i, j);
+            turmaSala[i][j].setName(buffer);
             model.add(turmaSala[i][j]);
         }
     }
@@ -288,6 +312,10 @@ void solveC(Data data)
 
     for (int i = 0; i < nTurmas; i++)
     {
+        char buffer[50];
+        sprintf(buffer, "Y%d", i);
+        y[i].setName(buffer);
+
         model.add(y[i]);
     }
 
@@ -298,6 +326,9 @@ void solveC(Data data)
         aux[i] = v;
         for (int j = 0; j < (nSalas * nSalas - nSalas) / 2; j++)
         {
+            char buffer[50];    
+            sprintf(buffer, "B%d,%d", i, j);
+            aux[i][j].setName(buffer);
             model.add(aux[i][j]);
         }
     }
@@ -339,11 +370,19 @@ void solveC(Data data)
         {
             for (int n = m + 1; n < nSalas; n++)
             {
-                model.add(aux[i][c] <= turmaSala[i][n]);
-                model.add(aux[i][c] <= turmaSala[i][m]);
-                model.add(aux[i][c] >= turmaSala[i][m] + turmaSala[i][n] - 1);
+                IloConstraint c1, c2, c3;
+                c1 = (aux[i][c] <= turmaSala[i][n]);
+                c1.setName("Rest 0");
+                c2 = (aux[i][c] <= turmaSala[i][m]);
+                c1.setName("Rest 1");
+                c3 = (aux[i][c] >= turmaSala[i][m] + turmaSala[i][n] - 1);
+                c1.setName("Rest 2");
 
-               // std::cout << m << n << std::endl;
+                model.add(c1);
+                model.add(c2);
+                model.add(c3);
+
+                // std::cout << m << n << std::endl;
 
                 c++;
             }
@@ -356,10 +395,16 @@ void solveC(Data data)
         IloExpr sumY(env);
         for (int j = 0; j < (nSalas * nSalas - nSalas) / 2; j++)
         {
-            model.add(y[i] >= aux[i][j]);
+            IloConstraint c1;
+            c1 = (y[i] >= aux[i][j]);
+            c1.setName("Rest 3");
+            model.add(c1);
             sumY += aux[i][j];
         }
-        model.add(y[i] <= sumY);
+        IloConstraint c1;
+        c1 = (y[i] <= sumY);
+        c1.setName("Rest 4");
+        model.add(c1);
     }
 
     for (int i = 0; i < nTurmas; i++)
@@ -370,11 +415,18 @@ void solveC(Data data)
             IloExpr sum(env);
             for (int k = 0; k < nAulas; k++)
             {
-                model.add(turmaSala[i][j] >= turmaAula[i][k] * salaAula[j][k]);
+                IloConstraint c1;
+                c1 = (turmaSala[i][j] >= turmaAula[i][k] * salaAula[j][k]);
+                model.add(c1);
+                c1.setName("Rest 5");
+                
                 sum += turmaAula[i][k] * salaAula[j][k];
             }
-            model.add(turmaSala[i][j] <= sum);
-            // model.add(turmaTamanho[i] * turmaSala[i][j] <= salaCapacidade[j] );
+            IloConstraint c1;
+            c1 = (turmaSala[i][j] <= sum);
+            model.add(c1);
+            c1.setName("Rest 6");
+             model.add(turmaTamanho[i] * turmaSala[i][j] <= salaCapacidade[j] );
         }
     }
 
@@ -385,7 +437,7 @@ void solveC(Data data)
         {
             sumTurmas += turmaTamanho[i] * turmaSala[i][j];
         }
-        model.add(sumTurmas <= salaCapacidade[j]);
+        //model.add(sumTurmas <= salaCapacidade[j]);
     }
 
     for (int k = 0; k < nAulas; k++)
@@ -419,14 +471,15 @@ void solveC(Data data)
     //Soluçao
 
     IloCplex cla(model);
+    //cla.setOut(env.getNullStream());
 
     cla.solve();
 
-    //cla.exportModel("modelo.lp");
+    cla.exportModel("modelo.lp");
 
-    std::cout << cla.getObjValue() << "\n";
+    // std::cout << cla.getObjValue() << "\n";
     std::cout << cla.getStatus() << "\n\n";
-/*
+
     for (int i = 0; i < nTurmas; i++)
     {
         std::cout << "Turma " << i << " tem aulas nas salas: ";
@@ -440,58 +493,4 @@ void solveC(Data data)
         }
         std::cout << "\n";
     }
-
-    std::cout << "\n\n";
-
-    for (int i = 0; i < nTurmas; i++)
-    {
-        for (int j = 0; j < nSalas; j++)
-        {
-            int x = (cla.getValue(turmaSala[i][j]) > 0.9) ? 1 : 0;
-            std::cout << x << " ";
-        }
-        std::cout << "\n";
-    }
-
-    std::cout << "\n\n";
-
-    for (int i = 0; i < nAulas; i++)
-    {
-        std::cout << "Aula " << i << " na sala: ";
-        for (int j = 0; j < nSalas; j++)
-        {
-            if (cla.getValue(salaAula[j][i]) > 0.9)
-            {
-                std::cout << j << " ";
-            }
-        }
-        std::cout << "\n";
-    }
-
-    std::cout << "\n\n";
-
-    for (int i = 0; i < nTurmas; i++)
-    {
-        for (int j = 0; j < (nSalas * nSalas - nSalas) / 2; j++)
-        {
-            if (cla.getValue(aux[i][j]) > 0.9)
-            {
-                std::cout << 1 << " ";
-            }
-            else
-            {
-                std::cout << 0 << " ";
-            }
-        }
-        std::cout << "\n";
-    }
-
-    std::cout << "\n\n";
-
-    for (int i = 0; i < nTurmas; i++)
-    {
-        std::cout << cla.getValue(y[i]) << std::endl;
-    }
-    */
 }
-
