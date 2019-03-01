@@ -34,4 +34,14 @@ class Data
         }
     }
 
+    void save(std::string fileName)
+    {
+        
+    }
+
+    void load(std::string fileName)
+    {
+        
+    }
+
 };

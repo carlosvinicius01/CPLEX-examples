@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     Data data;
     srand(time(NULL));
 
-    data.H = {{0}, {1,3}, {2},{4,5}};
+    /*data.H = {{0}, {1,3}, {2},{4,5}};
     data.TChH = {{5},{4},{3},{2},{1},{0}};
     data.hA = {{0,5},{1,4},{2,3}};
 
@@ -29,11 +29,11 @@ int main(int argc, char *argv[])
     data.nTurmas = data.H.size();
 
     data.Q = {60, 30};
-    data.D = {60,30,60,30};
+    data.D = {60,30,60,30};*/
 
     for (int i = 0; i < atoi(argv[1]); i++)
     {
-        //genData(data);
+        genData(data);
         if (argv[2][0] == '0' || argv[2][0] == '2')
         {
             solveC(data);
@@ -202,7 +202,7 @@ void solveC(Data data)
     }
 
     //////////////////////////////////////
-
+/*
     for (std::vector<std::vector<int>> i : aulaDiaHorario)
     {
         for (std::vector<int> j : i)
@@ -240,7 +240,7 @@ void solveC(Data data)
     }
 
     std::cout << "\n";
-
+*/
     //////////////////////////////
 
     
@@ -472,7 +472,7 @@ void solveC(Data data)
     //Soluçao
 
     IloCplex cla(model);
-    //cla.setOut(env.getNullStream());
+    cla.setOut(env.getNullStream());
 
     cla.solve();
 
@@ -481,7 +481,7 @@ void solveC(Data data)
     std::cout << cla.getObjValue() << "\n";
     std::cout << cla.getStatus() << "\n\n";
 
-    for (int i = 0; i < nTurmas; i++)
+   /* for (int i = 0; i < nTurmas; i++)
     {
         std::cout << "Turma " << i << " tem aulas nas salas: ";
         for (int j = 0; j < nSalas; j++)
@@ -494,4 +494,5 @@ void solveC(Data data)
         }
         std::cout << "\n";
     }
+    */
 }

@@ -2,6 +2,18 @@
 #include <time.h>
 #include <cmath>
 
+int vecFind(int a, std::vector<int> v)
+{
+    for(int i = 0; i < v.size(); i++)
+    {
+        if(v[i] == a)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
 int randRange(int min, int max)
 {
     return rand() % (max - min + 1) + min;
@@ -63,11 +75,11 @@ void genData(Data &data)
     data.Q = data.D = std::vector<int>();
     data.hA = std::vector<std::vector<int>>();
 
-    std::vector<std::vector<int>> turmaAula;
-    int nAulas = 146;
-    int nTurmas = 73;
-    int nHorarios = 14;
-    int nSalas = 40;
+    
+    int nHorarios = 10;
+    int nSalas = 5;
+    int nTurmas = nHorarios*nSalas/5;
+    int nAulas = nSalas * nHorarios;
 
     int minAulaPorTurma = 5;
     int maxAulaPorTurma = 5;
@@ -76,69 +88,74 @@ void genData(Data &data)
     data.nAulas = nAulas;
     data.nTurmas = nTurmas;
 
-    int minTurma = 30, maxTurma = 100;
+    int minTurma = 30, maxTurma = 60;
+    int minSala = 30, maxSala = 60;
+    int n = 5;
 
-    for (int i = 0; i < nSalas; i++)
-    {
-        data.Q.push_back(randRange(100, 200));
-    }
+    std::vector<std::vector<int>> horarioAulas(nHorarios, std::vector<int>(nSalas));
+
+    data.Q = std::vector<int>(nSalas, minSala);
+    data.D = std::vector<int>(nTurmas, minTurma);
+
+    std::vector<std::vector<int>> turmaAula(nTurmas);
 
     {
-        int y = min(data.Q);
-        for (int i = 0; i < nTurmas; i++)
+        int a = randRange(1,n);
+        for(int i = 0; i < a; i++)
         {
-            data.D.push_back(randRange(minTurma, maxTurma));
+            data.Q[i] = maxSala;
+        }
+        for(int i = 0; i < a; i++)
+        {
+            data.D[i] = maxTurma;
         }
     }
 
-
-
-    data.H = std::vector<std::vector<int>>(nTurmas);
-
-    // Aulas j das turmas t
     {
-        std::vector<int> v = randPermutation(0, nTurmas);
-        int c = 0;
-        int t = 0;
-
-        for (std::vector<int> &t : data.H)
+        int k = 0;
+        for(int i = 0; i < horarioAulas.size(); i++)
         {
-            int n = nAulas / nTurmas;
-            for (int j = 0; j < n; j++)
+            for(int j = 0; j < horarioAulas[i].size(); j++)
             {
-                if (c >= nAulas)
-                    break;
-                t.push_back(c);
-                c++;
+                horarioAulas[i][j] = k;
+                k++;
             }
         }
     }
 
-    // Horarios das turmas
-
-    std::vector<std::vector<int>> horarioAulas(nHorarios);
-
     {
-        // for(int h = 0; h < nHorarios; h++)
-        // {
-        int c = 0;
-        for (std::vector<int> t : data.H)
+        std::vector<std::vector<int>> A = horarioAulas;
+
+        for(std::vector<int>& t : turmaAula)
         {
-            std::vector<int> v = randPermutation(0, nHorarios);
-
-            //v.erase(v.begin()+t.size(), v.end());
-
-            for (int i = 0; i < t.size(); i++)
+            std::vector<int> horarioUsado;
+            for(int i = 0; i < nHorarios; i++)
             {
-                horarioAulas[v[i]].push_back(t[i]);
-                c++;
+                horarioUsado.push_back(i);
+            }
+
+            
+
+            for(int j = 0; j < nAulas / nTurmas; j++)
+            {
+                int a = rand() % A.size();
+                int b = rand() % A[a].size();
+
+                t.push_back(A[a][b]);
+                
+                A[a].erase(A[a].begin() + b);
+                if(A[a].size() == 0)
+                    A.erase(A.begin() + a);
+
             }
         }
-        //   }
     }
 
+    data.H = turmaAula;
 
-/*
+
+///////////////////////////////////
+
     std::cout << "Aulas das turmas \n";
 
     for (std::vector<int> i : data.H)
@@ -160,8 +177,11 @@ void genData(Data &data)
         }
         std::cout << "\n";
     }
-*/
 
+/////////////////////////////////////////
+
+
+    //Computaçao dos choques de horario
 
     data.hA = horarioAulas;
     data.TChH = std::vector<std::vector<int>>(nAulas);
@@ -178,4 +198,6 @@ void genData(Data &data)
             }
         }
     }
+
+    /////////////////
 }
