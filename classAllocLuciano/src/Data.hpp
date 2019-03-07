@@ -82,12 +82,15 @@ class Data
 
         int vectorSizes[8];
 
+        fread(vectorSizes, sizeof(vectorSizes[0]), sizeof(vectorSizes) / sizeof(vectorSizes[0]), fp);
 
         H = std::vector<std::vector<int>>(vectorSizes[0], std::vector<int>(vectorSizes[1]));
         TChH = std::vector<std::vector<int>>(vectorSizes[2], std::vector<int>(vectorSizes[3]));
         hA = std::vector<std::vector<int>>( vectorSizes[4], std::vector<int>(vectorSizes[5]));
         Q = std::vector<int>(vectorSizes[6]);
         D = std::vector<int>(vectorSizes[7]);
+
+        fread(&H[0][0],sizeof(H[0][0]),H[0].size(), fp);
 
         fclose(fp);
     }
