@@ -76,7 +76,7 @@ void genData(Data &data)
     data.hA = std::vector<std::vector<int>>();
 
     
-    int nHorarios = 10;
+    int nHorarios = 20;
     int nSalas = 5;
     int nTurmas = nHorarios*nSalas/5;
     int nAulas = nSalas * nHorarios;
@@ -132,20 +132,24 @@ void genData(Data &data)
             for(int i = 0; i < nHorarios; i++)
             {
                 horarioUsado.push_back(i);
-            }
+            } 
 
             
 
             for(int j = 0; j < nAulas / nTurmas; j++)
             {
-                int a = rand() % A.size();
-                int b = rand() % A[a].size();
-
-                t.push_back(A[a][b]);
+                //int a = rand() % A.size();
+                int a = rand() % horarioUsado.size();
+                int c = horarioUsado[a];
+                int b = rand() % (A[a].size() + A[a].size()==0);
                 
-                A[a].erase(A[a].begin() + b);
-                if(A[a].size() == 0)
-                    A.erase(A.begin() + a);
+                t.push_back(A[c][b]);
+                
+                if(A[a].size() != 0)
+                    A[a].erase(A[a].begin() + b);
+                //if(A[a].size() == 0)
+                //    A.erase(A.begin() + a);
+                horarioUsado.erase(horarioUsado.begin() + a);
 
             }
         }
