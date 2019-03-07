@@ -141,7 +141,7 @@ void genData(Data &data)
                 //int a = rand() % A.size();
                 int a = rand() % horarioUsado.size();
                 int c = horarioUsado[a];
-                int b = rand() % (A[a].size() + A[a].size()==0);
+                int b = rand() % (A[a].size() + (A[a].size()==0));
                 
                 t.push_back(A[c][b]);
                 
@@ -160,27 +160,7 @@ void genData(Data &data)
 
 ///////////////////////////////////
 
-    std::cout << "Aulas das turmas \n";
-
-    for (std::vector<int> i : data.H)
-    {
-        for (int j : i)
-        {
-            std::cout << j << " ";
-        }
-        std::cout << "\n";
-    }
-
-    std::cout << "\nAulas do horario \n";
-
-    for (std::vector<int> i : horarioAulas)
-    {
-        for (int j : i)
-        {
-            std::cout << j << " ";
-        }
-        std::cout << "\n";
-    }
+    
 
 /////////////////////////////////////////
 

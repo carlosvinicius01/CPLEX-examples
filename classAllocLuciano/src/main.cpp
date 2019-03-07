@@ -31,7 +31,19 @@ int main(int argc, char *argv[])
     data.Q = {60, 30};
     data.D = {60,30,60,30};*/
 
-    for (int i = 0; i < atoi(argv[1]); i++)
+    genData(data);
+
+    data.showData();
+
+    data.save("instancias/i1.txt");
+
+    Data d;
+
+    d.load("instancias/i1.txt");
+
+    d.showData();
+
+    /*for (int i = 0; i < atoi(argv[1]); i++)
     {
         genData(data);
         if (argv[2][0] == '0' || argv[2][0] == '2')
@@ -42,7 +54,7 @@ int main(int argc, char *argv[])
         {
             solveL(data);
         }
-    }
+    }*/
 }
 
 void solveL(Data data)

@@ -5,10 +5,11 @@ class Data
   public:
     std::vector<std::vector<int>> H;
     std::vector<std::vector<int>> TChH;
-    int nSalas, nAulas, nTurmas;
+    std::vector<std::vector<int>> hA;
+
     std::vector<int> Q, D;
 
-    std::vector<std::vector<int>> hA;
+    int nSalas, nAulas, nTurmas;
 
     void printH(int i)
     {
@@ -36,12 +37,87 @@ class Data
 
     void save(std::string fileName)
     {
-        
+        FILE *fp = fopen(fileName.c_str(), "wb");
+
+        fwrite(&nSalas, sizeof(nSalas), 1, fp);
+        fwrite(&nAulas, sizeof(nAulas), 1, fp);
+        fwrite(&nTurmas, sizeof(nTurmas), 1, fp);
+
+        int a;
+
+        a = H.size();
+        fwrite(&a, sizeof(a), 1, fp);
+        a = H[0].size();
+        fwrite(&a, sizeof(a), 1, fp);
+        a = TChH.size();
+        fwrite(&a, sizeof(a), 1, fp);
+        a = TChH[0].size();
+        fwrite(&a, sizeof(a), 1, fp);
+        a = hA.size();
+        fwrite(&a, sizeof(a), 1, fp);
+        a = hA[0].size();
+        fwrite(&a, sizeof(a), 1, fp);
+        a = Q.size();
+        fwrite(&a, sizeof(a), 1, fp);
+        a = D.size();
+        fwrite(&a, sizeof(a), 1, fp);
+
+        for (std::vector<int> i : H)
+        {
+            for (int j : i)
+            {
+                fwrite(&j, sizeof(j), 1, fp);
+            }
+        }
+
+        fclose(fp);
     }
 
     void load(std::string fileName)
     {
-        
+        FILE *fp = fopen(fileName.c_str(), "rb");
+        fread(&nSalas, sizeof(nSalas), 1, fp);
+        fread(&nAulas, sizeof(nAulas), 1, fp);
+        fread(&nTurmas, sizeof(nTurmas), 1, fp);
+
+        int vectorSizes[8];
+
+
+        H = std::vector<std::vector<int>>(vectorSizes[0], std::vector<int>(vectorSizes[1]));
+        TChH = std::vector<std::vector<int>>(vectorSizes[2], std::vector<int>(vectorSizes[3]));
+        hA = std::vector<std::vector<int>>( vectorSizes[4], std::vector<int>(vectorSizes[5]));
+        Q = std::vector<int>(vectorSizes[6]);
+        D = std::vector<int>(vectorSizes[7]);
+
+        fclose(fp);
     }
 
+    void showData()
+    {
+        std::cout << "Numero de salas: " << nSalas << "\n";
+        std::cout << "Numero de aulas: " << nAulas << "\n";
+        std::cout << "Numero de turmas: " << nTurmas << "\n";
+
+        std::cout << "\nAulas das turmas \n";
+
+        for (std::vector<int> i : H)
+        {
+            for (int j : i)
+            {
+                std::cout << j << " ";
+            }
+            std::cout << "\n";
+        }
+
+        std::cout << "\nAulas do horario \n";
+
+        for (std::vector<int> i : hA)
+        {
+            for (int j : i)
+            {
+                std::cout << j << " ";
+            }
+            std::cout << "\n";
+        }
+    }
 };
