@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
         genData(d);
         d.save("instancias/B_" + std::to_string(i));
     } */
+    
     Data data;
 
     data.load("instancias/" + std::string(argv[1]));
