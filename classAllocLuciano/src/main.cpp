@@ -146,9 +146,9 @@ void solveL(Data data)
     //Soluçao
 
     IloCplex cla(model);
-    cla.exportModel("MODELO.lp");
+    //cla.exportModel("MODELO.lp");
 
-    cla.setOut(env.getNullStream());
+    //cla.setOut(env.getNullStream());
 
     cla.solve();
     std::cout << cla.getObjValue() << "\n";
@@ -463,11 +463,11 @@ void solveC(Data data)
     //Soluçao
 
     IloCplex cla(model);
-    cla.setOut(env.getNullStream());
+    //cla.setOut(env.getNullStream());
 
     cla.solve();
 
-    cla.exportModel("modelo.lp");
+    //cla.exportModel("modelo.lp");
 
     std::cout << cla.getObjValue() << "\n";
     std::cout << cla.getStatus() << "\n\n";
