@@ -76,9 +76,9 @@ void genData(Data &data)
     data.hA = std::vector<std::vector<int>>();
 
     
-    int nHorarios = 20;
-    int nSalas = 5;
-    int nTurmas = nHorarios*nSalas/5;
+    int nHorarios = 40;
+    int nSalas = 20;
+    int nTurmas = nHorarios*nSalas/20;
     int nAulas = nSalas * nHorarios;
 
     int minAulaPorTurma = 5;

@@ -17,44 +17,26 @@ void solveC(Data data);
 
 int main(int argc, char *argv[])
 {
-    Data data;
     srand(time(NULL));
 
-    /*data.H = {{0}, {1,3}, {2},{4,5}};
-    data.TChH = {{5},{4},{3},{2},{1},{0}};
-    data.hA = {{0,5},{1,4},{2,3}};
-
-    data.nSalas = 2;
-    data.nAulas = 6;
-    data.nTurmas = data.H.size();
-
-    data.Q = {60, 30};
-    data.D = {60,30,60,30};*/
-
-    genData(data);
-
-    data.showData();
-
-    data.save("instancias/i1.txt");
-
-    Data d;
-
-    d.load("instancias/i1.txt");
-
-    d.showData();
-
-    /*for (int i = 0; i < atoi(argv[1]); i++)
+    /* for(int i = 0; i < 100; i++)
     {
-        genData(data);
-        if (argv[2][0] == '0' || argv[2][0] == '2')
-        {
-            solveC(data);
-        }
-        if (argv[2][0] == '1' || argv[2][0] == '2')
-        {
-            solveL(data);
-        }
-    }*/
+        Data d;
+        genData(d);
+        d.save("instancias/B_" + std::to_string(i));
+    } */
+    Data data;
+
+    data.load("instancias/" + std::string(argv[1]));
+
+    if (argv[2][0] == '0' || argv[2][0] == '2')
+    {
+        solveC(data);
+    }
+    if (argv[2][0] == '1' || argv[2][0] == '2')
+    {
+        solveL(data);
+    }
 }
 
 void solveL(Data data)
@@ -214,7 +196,7 @@ void solveC(Data data)
     }
 
     //////////////////////////////////////
-/*
+    /*
     for (std::vector<std::vector<int>> i : aulaDiaHorario)
     {
         for (std::vector<int> j : i)
@@ -255,9 +237,7 @@ void solveC(Data data)
 */
     //////////////////////////////
 
-    
-   
-   /*
+    /*
     std::vector<std::vector<int>> turmaAula = {{1,1,0,0}, {0,0,1,0}, {0,0,0,1}};
     std::vector<std::vector<std::vector<int>>> aulaDiaHorario; 
 
@@ -276,7 +256,6 @@ void solveC(Data data)
     
     std::vector<int> turmaTamanho = {30, 60, 30};
     std::vector<int> salaCapacidade = {60,30}; */
-
 
     IloEnv env;
     IloModel model(env);
@@ -339,7 +318,7 @@ void solveC(Data data)
         aux[i] = v;
         for (int j = 0; j < (nSalas * nSalas - nSalas) / 2; j++)
         {
-            char buffer[50];    
+            char buffer[50];
             sprintf(buffer, "B%d,%d", i, j);
             aux[i][j].setName(buffer);
             model.add(aux[i][j]);
@@ -432,14 +411,14 @@ void solveC(Data data)
                 c1 = (turmaSala[i][j] >= turmaAula[i][k] * salaAula[j][k]);
                 model.add(c1);
                 c1.setName("Rest 5");
-                
+
                 sum += turmaAula[i][k] * salaAula[j][k];
             }
             IloConstraint c1;
             c1 = (turmaSala[i][j] <= sum);
             model.add(c1);
             c1.setName("Rest 6");
-             model.add(turmaTamanho[i] * turmaSala[i][j] <= salaCapacidade[j] );
+            model.add(turmaTamanho[i] * turmaSala[i][j] <= salaCapacidade[j]);
         }
     }
 
@@ -493,7 +472,7 @@ void solveC(Data data)
     std::cout << cla.getObjValue() << "\n";
     std::cout << cla.getStatus() << "\n\n";
 
-   /* for (int i = 0; i < nTurmas; i++)
+    /* for (int i = 0; i < nTurmas; i++)
     {
         std::cout << "Turma " << i << " tem aulas nas salas: ";
         for (int j = 0; j < nSalas; j++)

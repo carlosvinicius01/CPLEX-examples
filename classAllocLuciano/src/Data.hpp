@@ -62,13 +62,21 @@ class Data
         a = D.size();
         fwrite(&a, sizeof(a), 1, fp);
 
-        for (std::vector<int> i : H)
+        for (int i = 0; i < H.size(); i++)
         {
-            for (int j : i)
-            {
-                fwrite(&j, sizeof(j), 1, fp);
-            }
+            fwrite(&H[i][0], sizeof(H[0][0]), H[0].size(), fp);
         }
+        for (int i = 0; i < TChH.size(); i++)
+        {
+            fwrite(&TChH[i][0], sizeof(TChH[0][0]), TChH[0].size(), fp);
+        }
+        for (int i = 0; i < hA.size(); i++)
+        {
+            fwrite(&hA[i][0], sizeof(hA[0][0]), hA[0].size(), fp);
+        }
+
+        fwrite(&Q[0], sizeof(Q[0]), Q.size(), fp);
+        fwrite(&D[0], sizeof(D[0]), D.size(), fp);
 
         fclose(fp);
     }
@@ -86,11 +94,27 @@ class Data
 
         H = std::vector<std::vector<int>>(vectorSizes[0], std::vector<int>(vectorSizes[1]));
         TChH = std::vector<std::vector<int>>(vectorSizes[2], std::vector<int>(vectorSizes[3]));
-        hA = std::vector<std::vector<int>>( vectorSizes[4], std::vector<int>(vectorSizes[5]));
+        hA = std::vector<std::vector<int>>(vectorSizes[4], std::vector<int>(vectorSizes[5]));
         Q = std::vector<int>(vectorSizes[6]);
         D = std::vector<int>(vectorSizes[7]);
 
-        fread(&H[0][0],sizeof(H[0][0]),H[0].size(), fp);
+        //std::vector<int> *vecs[5] = {&H[0][0], &TChH[0][0], &hA[0][0], &Q[0], &D[0]};
+
+        for (int i = 0; i < H.size(); i++)
+        {
+            fread(&H[i][0], sizeof(H[0][0]), H[0].size(), fp);
+        }
+        for (int i = 0; i < TChH.size(); i++)
+        {
+            fread(&TChH[i][0], sizeof(TChH[0][0]), TChH[0].size(), fp);
+        }
+        for (int i = 0; i < hA.size(); i++)
+        {
+            fread(&hA[i][0], sizeof(hA[0][0]), hA[0].size(), fp);
+        }
+
+        fread(&Q[0], sizeof(Q[0]), Q.size(), fp);
+        fread(&D[0], sizeof(D[0]), D.size(), fp);
 
         fclose(fp);
     }
