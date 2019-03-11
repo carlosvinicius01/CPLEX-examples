@@ -25,9 +25,10 @@ int main(int argc, char *argv[])
         genData(d);
         d.save("instancias/B_" + std::to_string(i));
     } */
-    
-    Data data;
 
+    std::cout << "\n";
+
+    Data data;
     data.load("instancias/" + std::string(argv[1]));
 
     if (argv[2][0] == '0' || argv[2][0] == '2')
@@ -38,6 +39,8 @@ int main(int argc, char *argv[])
     {
         solveL(data);
     }
+
+    std::cout << "\n\n";
 }
 
 void solveL(Data data)
@@ -148,12 +151,15 @@ void solveL(Data data)
 
     IloCplex cla(model);
     //cla.exportModel("MODELO.lp");
+    
+    cla.setOut(env.getNullStream());
 
-    //cla.setOut(env.getNullStream());
-
+    IloNum tempo = cla.getCplexTime();
     cla.solve();
+    std::cout << cla.getCplexTime() - tempo << "s\n";
+
     std::cout << cla.getObjValue() << "\n";
-    std::cout << cla.getStatus() << "\n\n";
+    std::cout << cla.getStatus() << "\n";
 }
 
 void solveC(Data data)
@@ -464,14 +470,16 @@ void solveC(Data data)
     //Soluçao
 
     IloCplex cla(model);
-    //cla.setOut(env.getNullStream());
+    cla.setOut(env.getNullStream());
 
+    IloNum tempo = cla.getCplexTime();
     cla.solve();
+    std::cout << cla.getCplexTime() - tempo << "s\n";
 
     //cla.exportModel("modelo.lp");
 
     std::cout << cla.getObjValue() << "\n";
-    std::cout << cla.getStatus() << "\n\n";
+    std::cout << cla.getStatus() << "\n";
 
     /* for (int i = 0; i < nTurmas; i++)
     {
