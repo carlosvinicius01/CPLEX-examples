@@ -152,7 +152,7 @@ void solveL(Data data)
     IloCplex cla(model);
     //cla.exportModel("MODELO.lp");
     
-    cla.setOut(env.getNullStream());
+    //cla.setOut(env.getNullStream());
 
     IloNum tempo = cla.getCplexTime();
     cla.solve();
