@@ -470,7 +470,7 @@ void solveC(Data data)
     //Soluçao
 
     IloCplex cla(model);
-    cla.setOut(env.getNullStream());
+    //cla.setOut(env.getNullStream());
 
     IloNum tempo = cla.getCplexTime();
     cla.solve();
