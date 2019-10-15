@@ -131,6 +131,7 @@ int main()
                     if (s + 1 < nSlots)
                     {
                         model.add(x[i][s] >= y[k][s] + y[k1][s + 1] - 1);
+                        // model.add(x[i][s] >= y[k][s+1] + y[k1][s] - 1);
                     }
                 }
             }
@@ -155,27 +156,27 @@ int main()
         }
     }
 
-    // IMPEDINDO SLOTS DISTANTES
-    for (int i = 0; i < nProfessores; i++)
-    {
-        for (int s = 0; s < nSlots; s++)
-        {
-            for (int sn = s + 3; sn < nSlots; sn++)
-            {
-                for (int t1 = 0; t1 < trabalhosRevisor[i].size(); t1++)
-                {
-                    for (int t2 = 0; t2 < trabalhosRevisor[i].size(); t2++)
-                    {
-                        if (t1 == t2)
-                            continue;
-                        int k = trabalhosRevisor[i][t1];
-                        int k1 = trabalhosRevisor[i][t2];
-                        model.add(y[k][s] + y[k1][sn] <= 1);
-                    }
-                }
-            }
-        }
-    }
+    // // IMPEDINDO SLOTS DISTANTES
+    // for (int i = 0; i < nProfessores; i++)
+    // {
+    //     for (int s = 0; s < nSlots; s++)
+    //     {
+    //         for (int sn = s + 3; sn < nSlots; sn++)
+    //         {
+    //             for (int t1 = 0; t1 < trabalhosRevisor[i].size(); t1++)
+    //             {
+    //                 for (int t2 = 0; t2 < trabalhosRevisor[i].size(); t2++)
+    //                 {
+    //                     if (t1 == t2)
+    //                         continue;
+    //                     int k = trabalhosRevisor[i][t1];
+    //                     int k1 = trabalhosRevisor[i][t2];
+    //                     model.add(y[k][s] + y[k1][sn] <= 1);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
     // FO
     {
@@ -206,6 +207,8 @@ int main()
     ENICTOP.exportModel("aaa.lp");
 
     cout << ENICTOP.getObjValue() << "\n";
+
+
 
     cout << "y_ks: \n";
     for (int k = 0; k < nTrabalhos; k++)
