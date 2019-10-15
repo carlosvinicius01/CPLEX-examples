@@ -128,9 +128,30 @@ int main()
                 {
                     int k = trabalhosRevisor[i][t1];
                     int k1 = trabalhosRevisor[i][t2];
-                    model.add(x[i][s] >= y[k][s] + y[k1][s] - 1);
+                    if (s + 1 < nSlots)
+                    {
+                        model.add(x[i][s] >= y[k][s] + y[k1][s + 1] - 1);
+                    }
                 }
             }
+        }
+    }
+
+    // RESTRIÇAO LOUCA AI
+    for (int i = 0; i < nProfessores; i++)
+    {
+        for (int s = 0; s < nSlots; s++)
+        {
+            IloExpr sum1(env), sum2(env);
+            for (int k = 0; k < trabalhosRevisor[i].size(); k++)
+            {
+                if (s + 1 < nSlots)
+                {
+                    sum1 += y[k][s];
+                    sum2 += y[k][s + 1];
+                }
+            }
+            model.add(2 * x[i][s] <= sum1 + sum2);
         }
     }
 
@@ -143,8 +164,10 @@ int main()
             {
                 for (int t1 = 0; t1 < trabalhosRevisor[i].size(); t1++)
                 {
-                    for (int t2 = t1 + 1; t2 < trabalhosRevisor[i].size(); t2++)
+                    for (int t2 = 0; t2 < trabalhosRevisor[i].size(); t2++)
                     {
+                        if (t1 == t2)
+                            continue;
                         int k = trabalhosRevisor[i][t1];
                         int k1 = trabalhosRevisor[i][t2];
                         model.add(y[k][s] + y[k1][sn] <= 1);
@@ -178,12 +201,23 @@ int main()
         cout << e;
     }
 
+    vector<int> trabalhosOrdem(nSlots, -1);
+
+    ENICTOP.exportModel("aaa.lp");
+
+    cout << ENICTOP.getObjValue() << "\n";
+
     cout << "y_ks: \n";
     for (int k = 0; k < nTrabalhos; k++)
     {
         for (int s = 0; s < nSlots; s++)
         {
             int a = (ENICTOP.getValue(y[k][s]) > 0.9) ? 1 : 0;
+            if (a == 1)
+            {
+                trabalhosOrdem[s] = k;
+            }
+
             cout << a << " ";
         }
         cout << "\n";
@@ -198,5 +232,19 @@ int main()
             cout << a << " ";
         }
         cout << "\n";
+    }
+
+    cout << "\n\n";
+
+    for (auto s : trabalhosOrdem)
+    {
+        if (s != -1)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                cout << tR[s][i] << " ";
+            }
+            cout << "\n";
+        }
     }
 }
