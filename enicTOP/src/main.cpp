@@ -57,7 +57,7 @@ int main()
 
     IloBoolVarArray y(env, V);
     IloArray<IloBoolVarArray> x(env, V);
-    IloArray<IloBoolVarArray> f(env, V);
+    IloArray<IloIntVarArray> f(env, V);
 
     for (int i = 0; i < V; i++)
     {
@@ -66,6 +66,8 @@ int main()
         f[i] = IloBoolVarArray(env, V);
         for (int j = 0; j < V; j++)
         {
+            if (i == j)
+                continue;
             model.add(x[i][j]);
             model.add(f[i][j]);
         }
@@ -135,6 +137,7 @@ int main()
             if (i == j)
                 continue;
             model.add(f[i][j] <= (nTrabalhos - 1) * x[i][j]);
+            model.add(f[i][j] >= 0);
         }
     }
 
@@ -162,12 +165,12 @@ int main()
     for (int i = 0; i < nProfessores; i++)
     {
         IloExpr sum(env);
-        for(int j = 0; j < V; j++)
+        for (int j = 0; j < V; j++)
         {
             vector<int> v = padraoInverso[j];
-            if(v[0] != i && (v[1] == i || v[2] == i || v[3] == i))
+            if (v[0] != i && (v[1] == i || v[2] == i || v[3] == i))
             {
-                sum+=y[j];
+                sum += y[j];
             }
         }
         model.add(sum >= 2);
@@ -182,6 +185,8 @@ int main()
     {
         for (int j = 0; j < V; j++)
         {
+            if (i == j)
+                continue;
             if (ENICTOP.getValue(x[i][j]) > 0.9)
             {
                 cout << i << " " << j << "\n";
@@ -197,5 +202,18 @@ int main()
         {
             cout << k << " " << padraoInverso[k][0] << " " << padraoInverso[k][1] << " " << padraoInverso[k][2] << " " << padraoInverso[k][3] << "\n";
         }
+    }
+
+    cout << "\n";
+
+    for (int i = 0; i < V; i++)
+    {
+        for (int j = 0; j < V; j++)
+        {
+            if (i == j)
+                continue;
+            cout << ENICTOP.getValue(f[i][j]) << " ";
+        }
+        cout << "\n";
     }
 }
