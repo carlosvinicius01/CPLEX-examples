@@ -19,7 +19,7 @@ int main()
     vector<vector<vector<vector<int>>>> padraoIndice(nTrabalhos, vector<vector<vector<int>>>(nProfessores, vector<vector<int>>(nProfessores, vector<int>(nProfessores))));
     vector<vector<int>> padraoInverso(nTrabalhos * ((nProfessores - 1) * (nProfessores - 1) / 2 - (nProfessores - 1) / 2), vector<int>(4, -1));
     int V = padraoInverso.size();
-    vector<vector<int>> c(V, vector<int>(V));
+    vector<vector<int>> c(V, vector<int>(V, 0));
 
     for (int i = 0, l = 0; i < trabalhoOrientador.size(); i++)
     {
@@ -49,7 +49,7 @@ int main()
 
     for (int i = 0; i < padraoInverso.size(); i++)
     {
-        cout << i << " - " << padraoInverso[i][0] << " " << padraoInverso[i][1] << " " << padraoInverso[i][2] << " " << padraoInverso[i][3] << "\n";
+        // cout << i << " - " << padraoInverso[i][0] << " " << padraoInverso[i][1] << " " << padraoInverso[i][2] << " " << padraoInverso[i][3] << "\n";
     }
 
     IloEnv env;
@@ -131,7 +131,7 @@ int main()
     // TODO CLUSTER DEVE SER VISITADO
     for (int t = 0; t < nTrabalhos; t++)
     {
-        int  o = trabalhoOrientador[t];
+        int o = trabalhoOrientador[t];
         IloExpr sum(env);
         for (int a1 = 0; a1 < nProfessores; a1++)
         {
@@ -146,7 +146,30 @@ int main()
             }
         }
         model.add(sum == 1);
+    }
 
+    IloCplex ENICTOP(model);
 
+    ENICTOP.solve();
+
+    for (int i = 0; i < V; i++)
+    {
+        for (int j = 0; j < V; j++)
+        {
+            if (ENICTOP.getValue(x[i][j]) > 0.9)
+            {
+                cout << i << " " << j << "\n";
+            }
+        }
+    }
+
+    cout << "\n";
+
+    for (int k = 0; k < V; k++)
+    {
+        if (ENICTOP.getValue(y[k]) > 0.9)
+        {
+            cout << k << " " << padraoInverso[k][0] << " " << padraoInverso[k][1] << " " << padraoInverso[k][2] << " " << padraoInverso[k][3] << "\n";
+        }
     }
 }
