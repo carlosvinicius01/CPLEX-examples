@@ -158,6 +158,22 @@ int main()
         model.add(sum == 1);
     }
 
+    // CADA AVALIADOR SÓ PODE AVALIAR 2 A 4 TRABALHOS
+    for (int i = 0; i < nProfessores; i++)
+    {
+        IloExpr sum(env);
+        for(int j = 0; j < V; j++)
+        {
+            vector<int> v = padraoInverso[j];
+            if(v[0] != i && (v[1] == i || v[2] == i || v[3] == i))
+            {
+                sum+=y[j];
+            }
+        }
+        model.add(sum >= 2);
+        model.add(sum <= 4);
+    }
+
     IloCplex ENICTOP(model);
 
     ENICTOP.solve();
