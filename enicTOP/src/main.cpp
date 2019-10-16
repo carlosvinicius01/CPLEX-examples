@@ -78,6 +78,8 @@ int main()
         {
             for (int j = 0; j < V; j++)
             {
+                if (i == j)
+                    continue;
                 sum += c[i][j] * x[i][j];
             }
         }
@@ -91,6 +93,8 @@ int main()
             IloExpr sum(env);
             for (int i = 0; i < V; i++)
             {
+                if (i == k)
+                    continue;
                 sum += x[i][k];
             }
             model.add(sum == y[k]);
@@ -102,6 +106,8 @@ int main()
             IloExpr sum(env);
             for (int j = 0; j < V; j++)
             {
+                if (k == j)
+                    continue;
                 sum += x[k][j];
             }
             model.add(sum == y[k]);
@@ -114,6 +120,8 @@ int main()
         IloExpr sum1(env), sum2(env);
         for (int i = 0; i < V; i++)
         {
+            if (k == i)
+                continue;
             sum1 += f[i][k];
             sum2 += f[k][i];
         }
@@ -124,7 +132,9 @@ int main()
     {
         for (int j = 0; j < V; j++)
         {
-            model.add(f[i][j] <= (V - 1) * x[i][j]);
+            if (i == j)
+                continue;
+            model.add(f[i][j] <= (nTrabalhos - 1) * x[i][j]);
         }
     }
 
