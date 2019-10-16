@@ -130,6 +130,14 @@ int main()
         model.add(sum1 - sum2 = y[k]);
     }
 
+    {
+        IloExpr sum(env);
+        for (int i = 1; i < V; i++)
+        {
+            model.add(f[0][i] == 5 * x[0][i]);
+        }
+    }
+
     for (int i = 0; i < V; i++)
     {
         for (int j = 0; j < V; j++)
