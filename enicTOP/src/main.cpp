@@ -15,9 +15,9 @@ using namespace std;
 
 int main()
 {
-    int nTrabalhos = 6, nProfessores = 3;
-    int A = 4;
-    vector<int> trabalhoOrientador = {4 - A, 5 - A, 5 - A, 6 - A, 6 - A, 4 - A};
+    int nTrabalhos = 6, nProfessores = 6;
+    int A = 0;
+    vector<int> trabalhoOrientador = {0 - A, 1 - A, 2 - A, 3 - A, 4 - A, 5 - A};
     vector<vector<vector<vector<int>>>> padraoIndice(nTrabalhos, vector<vector<vector<int>>>(nProfessores, vector<vector<int>>(nProfessores, vector<int>(nProfessores))));
     vector<vector<int>> padraoInverso(nTrabalhos * ((nProfessores - 1) * (nProfessores - 1) / 2 - (nProfessores - 1) / 2), vector<int>(4, -1));
     int V = padraoInverso.size();
