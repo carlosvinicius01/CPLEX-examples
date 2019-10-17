@@ -16,11 +16,11 @@ using namespace std;
 int main()
 {
     int nTrabalhos = 6, nProfessores = 6;
-    vector<int> trabalhoOrientador = {0, 0, 3, 4, 5, 3};
+    vector<int> trabalhoOrientador = {0, 1, 2, 3, 4, 5};
     vector<vector<vector<vector<int>>>> padraoIndice(nTrabalhos, vector<vector<vector<int>>>(nProfessores, vector<vector<int>>(nProfessores, vector<int>(nProfessores))));
     vector<vector<int>> padraoInverso(nTrabalhos * ((nProfessores - 1) * (nProfessores - 1) / 2 - (nProfessores - 1) / 2), vector<int>(4, -1));
     int V = padraoInverso.size();
-    vector<vector<double>> c(V, vector<double>(V, 0));
+    vector<vector<double>> c(V + 1, vector<double>(V + 1, 0));
 
     for (int i = 0, l = 0; i < trabalhoOrientador.size(); i++)
     {
@@ -65,6 +65,11 @@ int main()
         }
     }
 
+    for (int i = 0; i < V; i++)
+    {
+        c[V][i] = c[i][V] = 0;
+    }
+
     for (int i = 0; i < padraoInverso.size(); i++)
     {
         // cout << i << " - " << padraoInverso[i][0] << " " << padraoInverso[i][1] << " " << padraoInverso[i][2] << " " << padraoInverso[i][3] << "\n";
@@ -73,16 +78,16 @@ int main()
     IloEnv env;
     IloModel model(env);
 
-    IloBoolVarArray y(env, V);
-    IloArray<IloBoolVarArray> x(env, V);
-    IloArray<IloIntVarArray> f(env, V);
+    IloBoolVarArray y(env, V + 1);
+    IloArray<IloBoolVarArray> x(env, V + 1);
+    IloArray<IloIntVarArray> f(env, V + 1);
 
-    for (int i = 0; i < V; i++)
+    for (int i = 0; i < V + 1; i++)
     {
         model.add(y[i]);
-        x[i] = IloBoolVarArray(env, V);
-        f[i] = IloIntVarArray(env, V, 0, V - 1);
-        for (int j = 0; j < V; j++)
+        x[i] = IloBoolVarArray(env, V + 1);
+        f[i] = IloIntVarArray(env, V + 1, 0, V + 1);
+        for (int j = 0; j < V + 1; j++)
         {
             if (i == j)
                 continue;
@@ -94,9 +99,9 @@ int main()
     // FO
     {
         IloExpr sum(env);
-        for (int i = 0; i < V; i++)
+        for (int i = 0; i < V + 1; i++)
         {
-            for (int j = 0; j < V; j++)
+            for (int j = 0; j < V + 1; j++)
             {
                 if (i == j)
                     continue;
@@ -108,10 +113,10 @@ int main()
 
     // GRAU
     {
-        for (int k = 0; k < V; k++)
+        for (int k = 0; k < V + 1; k++)
         {
             IloExpr sum(env);
-            for (int i = 0; i < V; i++)
+            for (int i = 0; i < V + 1; i++)
             {
                 if (i == k)
                     continue;
@@ -121,10 +126,10 @@ int main()
         }
     }
     {
-        for (int k = 0; k < V; k++)
+        for (int k = 0; k < V + 1; k++)
         {
             IloExpr sum(env);
-            for (int j = 0; j < V; j++)
+            for (int j = 0; j < V + 1; j++)
             {
                 if (k == j)
                     continue;
@@ -135,10 +140,10 @@ int main()
     }
 
     // OBLITERAÇÃO DE SUBTOURS
-    for (int k = 1; k < V; k++)
+    for (int k = 0; k < V; k++)
     {
         IloExpr sum1(env), sum2(env);
-        for (int i = 0; i < V; i++)
+        for (int i = 0; i < V + 1; i++)
         {
             if (k == i)
                 continue;
@@ -148,13 +153,13 @@ int main()
         model.add(sum1 - sum2 == y[k]);
     }
 
-    for (int i = 0; i < V; i++)
+    for (int i = 0; i < V + 1; i++)
     {
-        for (int j = 0; j < V; j++)
+        for (int j = 0; j < V + 1; j++)
         {
             if (i == j)
                 continue;
-            model.add(f[i][j] <= (nTrabalhos - 1) * x[i][j]);
+            model.add(f[i][j] <= (nTrabalhos + 1) * x[i][j]);
             model.add(f[i][j] >= 0);
         }
     }
@@ -178,6 +183,7 @@ int main()
         }
         model.add(sum == 1);
     }
+    model.add(y[V] == 1);
 
     // CADA AVALIADOR SÓ PODE AVALIAR 2 A 4 TRABALHOS
     for (int i = 0; i < nProfessores; i++)
@@ -199,9 +205,9 @@ int main()
 
     ENICTOP.solve();
 
-    for (int i = 0; i < V; i++)
+    for (int i = 0; i < V + 1; i++)
     {
-        for (int j = 0; j < V; j++)
+        for (int j = 0; j < V + 1; j++)
         {
             if (i == j)
                 continue;
@@ -218,7 +224,7 @@ int main()
     {
         if (ENICTOP.getValue(y[k]) > 0.9)
         {
-            cout << padraoInverso[k][0] << " " << padraoInverso[k][1] << " " << padraoInverso[k][2] << "\n";
+            cout << k << " - " << padraoInverso[k][0] << " " << padraoInverso[k][1] << " " << padraoInverso[k][2] << "\n";
         }
     }
 
