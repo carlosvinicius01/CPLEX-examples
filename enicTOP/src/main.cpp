@@ -16,7 +16,7 @@ using namespace std;
 int main()
 {
     int nTrabalhos = 6, nProfessores = 4;
-    vector<int> trabalhoOrientador = {0, 1, 2, 3, 3, 2};
+    vector<int> trabalhoOrientador = {0, 1, 1, 2, 3, 3};
     vector<vector<vector<vector<int>>>> padraoIndice(nTrabalhos, vector<vector<vector<int>>>(nProfessores, vector<vector<int>>(nProfessores, vector<int>(nProfessores))));
     vector<vector<int>> padraoInverso(nTrabalhos * ((nProfessores - 1) * (nProfessores - 1) / 2 - (nProfessores - 1) / 2), vector<int>(4, -1));
     int V = padraoInverso.size();
@@ -185,20 +185,22 @@ int main()
     }
     model.add(y[V] == 1);
 
-    // CADA AVALIADOR SÓ PODE AVALIAR 2 A 4 TRABALHOS
+    // CADA AVALIADOR DEVE AVALIAR DE 2 A 4 TRABALHOS
     for (int i = 0; i < nProfessores; i++)
     {
         IloExpr sum(env);
         for (int j = 0; j < V; j++)
         {
             vector<int> v = padraoInverso[j];
-            if (v[0] != i && (v[1] == i || v[2] == i || v[3] == i))
+            if (v[0] != i && (v[1] == i || v[2] == i))
             {
+                cout << j << " ";
                 sum += y[j];
             }
         }
         model.add(sum >= 2);
         model.add(sum <= 4);
+        cout << " - " << i << " \n";
     }
 
     IloCplex ENICTOP(model);
@@ -224,7 +226,7 @@ int main()
     {
         if (ENICTOP.getValue(y[k]) > 0.9)
         {
-            cout << k << " - " << padraoInverso[k][0] << " " << padraoInverso[k][1] << " " << padraoInverso[k][2] << "\n";
+            cout << k << " - " << padraoInverso[k][0] << " " << padraoInverso[k][1] << " " << padraoInverso[k][2] << ", " << padraoInverso[k][3] << "\n";
         }
     }
 
