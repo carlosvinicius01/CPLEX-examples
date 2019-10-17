@@ -15,8 +15,8 @@ using namespace std;
 
 int main()
 {
-    int nTrabalhos = 6, nProfessores = 6;
-    vector<int> trabalhoOrientador = {0, 1, 2, 3, 4, 5};
+    int nTrabalhos = 6, nProfessores = 4;
+    vector<int> trabalhoOrientador = {0, 1, 2, 3, 0, 0};
     vector<vector<vector<vector<int>>>> padraoIndice(nTrabalhos, vector<vector<vector<int>>>(nProfessores, vector<vector<int>>(nProfessores, vector<int>(nProfessores))));
     vector<vector<int>> padraoInverso(nTrabalhos * ((nProfessores - 1) * (nProfessores - 1) / 2 - (nProfessores - 1) / 2), vector<int>(4, -1));
     int V = padraoInverso.size();
@@ -72,7 +72,7 @@ int main()
 
     for (int i = 0; i < padraoInverso.size(); i++)
     {
-        // cout << i << " - " << padraoInverso[i][0] << " " << padraoInverso[i][1] << " " << padraoInverso[i][2] << " " << padraoInverso[i][3] << "\n";
+        cout << i << " - " << padraoInverso[i][0] << " " << padraoInverso[i][1] << " " << padraoInverso[i][2] << " " << padraoInverso[i][3] << "\n";
     }
 
     IloEnv env;
