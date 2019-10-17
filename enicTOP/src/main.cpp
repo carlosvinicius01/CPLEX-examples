@@ -7,6 +7,7 @@
 #include <vector>
 #include <random>
 #include <cmath>
+#include <set>
 
 #include <stdlib.h>
 
@@ -15,11 +16,11 @@ using namespace std;
 int main()
 {
     int nTrabalhos = 6, nProfessores = 6;
-    vector<int> trabalhoOrientador = {3, 1, 1, 2, 3, 0};
+    vector<int> trabalhoOrientador = {0, 0, 3, 4, 5, 3};
     vector<vector<vector<vector<int>>>> padraoIndice(nTrabalhos, vector<vector<vector<int>>>(nProfessores, vector<vector<int>>(nProfessores, vector<int>(nProfessores))));
     vector<vector<int>> padraoInverso(nTrabalhos * ((nProfessores - 1) * (nProfessores - 1) / 2 - (nProfessores - 1) / 2), vector<int>(4, -1));
     int V = padraoInverso.size();
-    vector<vector<int>> c(V, vector<int>(V, 0));
+    vector<vector<double>> c(V, vector<double>(V, 0));
 
     for (int i = 0, l = 0; i < trabalhoOrientador.size(); i++)
     {
@@ -47,6 +48,23 @@ int main()
         padraoIndice[o][a1][a2][t] = padraoIndice[o][a2][a1][t] = i;
     }
 
+    // DETERMINAÇÃO DOS CUSTOS
+    for (int i = 0; i < V; i++)
+    {
+        for (int j = i + 1; j < V; j++)
+        {
+            vector<int> v1 = padraoInverso[i];
+            vector<int> v2 = padraoInverso[j];
+
+            set<int> s1(v1.begin(), v1.begin() + 3);
+            set<int> s2(v2.begin(), v2.begin() + 3);
+            vector<int> s3;
+            set_intersection(s1.begin(), s1.end(), s2.begin(), s2.end(), back_inserter(s3));
+
+            c[j][i] = c[i][j] = 30 - 10 * s3.size();
+        }
+    }
+
     for (int i = 0; i < padraoInverso.size(); i++)
     {
         // cout << i << " - " << padraoInverso[i][0] << " " << padraoInverso[i][1] << " " << padraoInverso[i][2] << " " << padraoInverso[i][3] << "\n";
@@ -63,7 +81,7 @@ int main()
     {
         model.add(y[i]);
         x[i] = IloBoolVarArray(env, V);
-        f[i] = IloBoolVarArray(env, V);
+        f[i] = IloIntVarArray(env, V, 0, V - 1);
         for (int j = 0; j < V; j++)
         {
             if (i == j)
@@ -85,7 +103,7 @@ int main()
                 sum += c[i][j] * x[i][j];
             }
         }
-        model.add(IloMaximize(env, sum));
+        model.add(IloMinimize(env, sum));
     }
 
     // GRAU
@@ -127,15 +145,7 @@ int main()
             sum1 += f[i][k];
             sum2 += f[k][i];
         }
-        model.add(sum1 - sum2 = y[k]);
-    }
-
-    {
-        IloExpr sum(env);
-        for (int i = 1; i < V; i++)
-        {
-            model.add(f[0][i] == 5 * x[0][i]);
-        }
+        model.add(sum1 - sum2 == y[k]);
     }
 
     for (int i = 0; i < V; i++)
@@ -197,7 +207,7 @@ int main()
                 continue;
             if (ENICTOP.getValue(x[i][j]) > 0.9)
             {
-                cout << i << " " << j << "\n";
+                cout << i << " " << j << ", " << c[i][j] << "\n";
             }
         }
     }
@@ -208,20 +218,20 @@ int main()
     {
         if (ENICTOP.getValue(y[k]) > 0.9)
         {
-            cout << k << " " << padraoInverso[k][0] << " " << padraoInverso[k][1] << " " << padraoInverso[k][2] << " " << padraoInverso[k][3] << "\n";
+            cout << padraoInverso[k][0] << " " << padraoInverso[k][1] << " " << padraoInverso[k][2] << "\n";
         }
     }
 
-    cout << "\n";
+    // cout << "\n";
 
-    for (int i = 0; i < V; i++)
-    {
-        for (int j = 0; j < V; j++)
-        {
-            if (i == j)
-                continue;
-            cout << ENICTOP.getValue(f[i][j]) << " ";
-        }
-        cout << "\n";
-    }
+    // for (int i = 0; i < V; i++)
+    // {
+    //     for (int j = 0; j < V; j++)
+    //     {
+    //         if (i == j)
+    //             continue;
+    //         cout << ENICTOP.getValue(f[i][j]) << " ";
+    //     }
+    //     cout << "\n";
+    // }
 }
