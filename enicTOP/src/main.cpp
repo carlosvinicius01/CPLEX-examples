@@ -15,8 +15,9 @@ using namespace std;
 
 int main()
 {
-    int nTrabalhos = 6, nProfessores = 4;
-    vector<int> trabalhoOrientador = {0, 1, 1, 2, 3, 3};
+    int nTrabalhos = 6, nProfessores = 3;
+    int A = 4;
+    vector<int> trabalhoOrientador = {4 - A, 5 - A, 5 - A, 6 - A, 6 - A, 4 - A};
     vector<vector<vector<vector<int>>>> padraoIndice(nTrabalhos, vector<vector<vector<int>>>(nProfessores, vector<vector<int>>(nProfessores, vector<int>(nProfessores))));
     vector<vector<int>> padraoInverso(nTrabalhos * ((nProfessores - 1) * (nProfessores - 1) / 2 - (nProfessores - 1) / 2), vector<int>(4, -1));
     int V = padraoInverso.size();
@@ -226,7 +227,7 @@ int main()
     {
         if (ENICTOP.getValue(y[k]) > 0.9)
         {
-            cout << k << " - " << padraoInverso[k][0] << " " << padraoInverso[k][1] << " " << padraoInverso[k][2] << ", " << padraoInverso[k][3] << "\n";
+            cout << k << " - " << padraoInverso[k][0] + A << " " << padraoInverso[k][1] + A << " " << padraoInverso[k][2] + A << ", " << padraoInverso[k][3] << "\n";
         }
     }
 
