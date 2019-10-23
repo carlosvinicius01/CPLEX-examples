@@ -172,9 +172,9 @@ int main()
                         if (t1 == t2)
                             continue;
                         IloExpr sumGap(env);
-                        for(int j = s; j < sn; j++)
+                        for(int j = s + 1; j < sn - 1; j++)
                         {
-                            sumGap += y[k][j];
+                            sumGap += y[s][j];
                         }
                         int k = trabalhosRevisor[i][t1];
                         int k1 = trabalhosRevisor[i][t2];
