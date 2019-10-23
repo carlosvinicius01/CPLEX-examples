@@ -156,27 +156,34 @@ int main()
         }
     }
 
-    // // IMPEDINDO SLOTS DISTANTES
-    // for (int i = 0; i < nProfessores; i++)
-    // {
-    //     for (int s = 0; s < nSlots; s++)
-    //     {
-    //         for (int sn = s + 3; sn < nSlots; sn++)
-    //         {
-    //             for (int t1 = 0; t1 < trabalhosRevisor[i].size(); t1++)
-    //             {
-    //                 for (int t2 = 0; t2 < trabalhosRevisor[i].size(); t2++)
-    //                 {
-    //                     if (t1 == t2)
-    //                         continue;
-    //                     int k = trabalhosRevisor[i][t1];
-    //                     int k1 = trabalhosRevisor[i][t2];
-    //                     model.add(y[k][s] + y[k1][sn] <= 1);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+    // IMPEDINDO SLOTS DISTANTES
+    
+    int gap = 3;
+    for (int i = 0; i < nProfessores; i++)
+    {
+        for (int s = 0; s < nSlots; s++)
+        {
+            for (int sn = s + gap; sn < nSlots; sn++)
+            {
+                for (int t1 = 0; t1 < trabalhosRevisor[i].size(); t1++)
+                {
+                    for (int t2 = 0; t2 < trabalhosRevisor[i].size(); t2++)
+                    {
+                        if (t1 == t2)
+                            continue;
+                        IloExpr sumGap(env);
+                        for(int j = s; j < sn; j++)
+                        {
+                            sumGap += y[k][j];
+                        }
+                        int k = trabalhosRevisor[i][t1];
+                        int k1 = trabalhosRevisor[i][t2];
+                        model.add(y[k][s] - sumGap + y[k1][sn] <= 1);
+                    }
+                }
+            }
+        }
+    }
 
     // FO
     {

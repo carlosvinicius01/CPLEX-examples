@@ -199,7 +199,7 @@ int main()
                 sum += y[j];
             }
         }
-        model.add(sum >= 2);
+        model.add(sum >= 1);
         model.add(sum <= 4);
         cout << " - " << i << " \n";
     }
