@@ -15,9 +15,9 @@ using namespace std;
 
 int main()
 {
-    int nTrabalhos = 6, nProfessores = 4;
+    int nTrabalhos = 5, nProfessores = 5;
     int A = 0;
-    vector<int> trabalhoOrientador = {0, 0, 0, 1, 2, 3};
+    vector<int> trabalhoOrientador = {0, 1, 2, 3, 4};
     vector<vector<vector<vector<int>>>> padraoIndice(nTrabalhos, vector<vector<vector<int>>>(nProfessores, vector<vector<int>>(nProfessores, vector<int>(nProfessores))));
     vector<vector<int>> padraoInverso(nTrabalhos * ((nProfessores - 1) * (nProfessores - 1) / 2 - (nProfessores - 1) / 2), vector<int>(4, -1));
     int V = padraoInverso.size();
@@ -79,6 +79,7 @@ int main()
     IloEnv env;
     IloModel model(env);
 
+    IloArray<IloBoolVarArray> z(env, V + 1);
     IloBoolVarArray y(env, V + 1);
     IloArray<IloBoolVarArray> x(env, V + 1);
     IloArray<IloIntVarArray> f(env, V + 1);
@@ -88,6 +89,14 @@ int main()
         model.add(y[i]);
         x[i] = IloBoolVarArray(env, V + 1);
         f[i] = IloIntVarArray(env, V + 1, 0, V + 1);
+        model.add(y[i]);
+        z[i] = IloBoolVarArray(env, nTrabalhos + 1);
+
+        for (int j = 0; j < nTrabalhos; j++)
+        {
+            model.add(z[i][j]);
+        }
+
         for (int j = 0; j < V + 1; j++)
         {
             if (i == j)
@@ -111,6 +120,37 @@ int main()
         }
         model.add(IloMinimize(env, sum));
     }
+
+    //POSICAO
+    for (int i = 0; i < V + 1; i++)
+    {
+        IloExpr sum(env);
+        for (int j = 0; j < nTrabalhos + 1; j++)
+        {
+            sum += z[i][j];
+        }
+        model.add(y[i] == sum);
+    }
+
+    for (int i = 0; i < nTrabalhos + 1; i++)
+    {
+        IloExpr sum(env);
+        for (int j = 0; j < V + 1; j++)
+        {
+            sum += z[j][i];
+        }
+        model.add(sum == 1);
+    }
+
+    // for (int i = 0; i < V; i++)
+    // {
+    //     IloExpr sum(env);
+    //     for (int j = 0; j < nTrabalhos; j++)
+    //     {
+    //         sum += y[j];
+    //     }
+    //     model.add(sum == 1);
+    // }
 
     // GRAU
     {
@@ -231,16 +271,14 @@ int main()
         }
     }
 
-    // cout << "\n";
+    cout << "\n";
 
-    // for (int i = 0; i < V; i++)
-    // {
-    //     for (int j = 0; j < V; j++)
-    //     {
-    //         if (i == j)
-    //             continue;
-    //         cout << ENICTOP.getValue(f[i][j]) << " ";
-    //     }
-    //     cout << "\n";
-    // }
+    for (int i = 0; i < V + 1; i++)
+    {
+        for (int j = 0; j < nTrabalhos + 1; j++)
+        {
+            cout << ENICTOP.getValue(z[i][j]) << " ";
+        }
+        cout << "\n";
+    }
 }

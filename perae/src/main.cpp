@@ -157,7 +157,7 @@ int main()
     }
 
     // IMPEDINDO SLOTS DISTANTES
-    
+
     int gap = 3;
     for (int i = 0; i < nProfessores; i++)
     {
@@ -171,13 +171,25 @@ int main()
                     {
                         if (t1 == t2)
                             continue;
-                        IloExpr sumGap(env);
-                        for(int j = s + 1; j < sn - 1; j++)
-                        {
-                            sumGap += y[s][j];
-                        }
+
                         int k = trabalhosRevisor[i][t1];
                         int k1 = trabalhosRevisor[i][t2];
+
+                        IloExpr sumGap(env);
+
+                        for (int t3 = 0; t3 < trabalhosRevisor[i].size(); t3++)
+                        {
+                            if (t3 == t1 || t3 == t2)
+                                continue;
+
+                            int k2 = trabalhosRevisor[i][t3];
+
+                            for(int j = s + 1; j < sn - 1; j++)
+                            {
+                                sumGap += y[k2][j];
+                            }
+                        }
+
                         model.add(y[k][s] - sumGap + y[k1][sn] <= 1);
                     }
                 }
@@ -214,8 +226,6 @@ int main()
     ENICTOP.exportModel("aaa.lp");
 
     cout << ENICTOP.getObjValue() << "\n";
-
-
 
     cout << "y_ks: \n";
     for (int k = 0; k < nTrabalhos; k++)
