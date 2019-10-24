@@ -367,4 +367,15 @@ int main()
         }
         cout << "\n";
     }
+
+    cout << "\n";
+
+    for (int i = 0; i < nProfessores; i++)
+    {
+        for (int j = 0; j < nTrabalhos; j++)
+        {
+            cout << ENICTOP.getValue(l[i][j]) << " ";
+        }
+        cout << "\n";
+    }
 }
