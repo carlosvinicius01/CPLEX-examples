@@ -15,9 +15,9 @@ using namespace std;
 
 int main()
 {
-    int nTrabalhos = 5, nProfessores = 5;
+    int nTrabalhos = 6, nProfessores = 4;
     int A = 0;
-    vector<int> trabalhoOrientador = {0, 1, 2, 3, 4};
+    vector<int> trabalhoOrientador = {0, 0, 0, 1, 2, 3};
     vector<vector<vector<vector<int>>>> padraoIndice(nTrabalhos, vector<vector<vector<int>>>(nProfessores, vector<vector<int>>(nProfessores, vector<int>(nProfessores))));
     vector<vector<int>> padraoInverso(nTrabalhos * ((nProfessores - 1) * (nProfessores - 1) / 2 - (nProfessores - 1) / 2), vector<int>(4, -1));
     int V = padraoInverso.size();
@@ -79,10 +79,46 @@ int main()
     IloEnv env;
     IloModel model(env);
 
-    IloArray<IloBoolVarArray> z(env, V + 1);
+    IloArray<IloBoolVarArray> z(env, V);
     IloBoolVarArray y(env, V + 1);
     IloArray<IloBoolVarArray> x(env, V + 1);
     IloArray<IloIntVarArray> f(env, V + 1);
+    IloArray<IloArray<IloBoolVarArray>> u(env, V);
+    IloArray<IloBoolVarArray> l(env, nProfessores);
+
+    for (int i = 0; i < nProfessores; i++)
+    {
+        l[i] = IloBoolVarArray(env, nTrabalhos);
+
+        for (int j = 0; j < nTrabalhos; j++)
+        {
+            model.add(l[i][j]);
+        }
+    }
+
+    for (int i = 0; i < V; i++)
+    {
+        z[i] = IloBoolVarArray(env, nTrabalhos);
+        u[i] = IloArray<IloBoolVarArray>(env, V);
+
+        for (int j = 0; j < nTrabalhos; j++)
+        {
+            model.add(z[i][j]);
+        }
+
+        for (int j = 0; j < V; j++)
+        {
+            if (i == j)
+                continue;
+
+            u[i][j] = IloBoolVarArray(env, nTrabalhos - 1);
+
+            for (int p = 0; p < nTrabalhos - 1; p++)
+            {
+                model.add(u[i][j][p]);
+            }
+        }
+    }
 
     for (int i = 0; i < V + 1; i++)
     {
@@ -90,12 +126,6 @@ int main()
         x[i] = IloBoolVarArray(env, V + 1);
         f[i] = IloIntVarArray(env, V + 1, 0, V + 1);
         model.add(y[i]);
-        z[i] = IloBoolVarArray(env, nTrabalhos + 1);
-
-        for (int j = 0; j < nTrabalhos; j++)
-        {
-            model.add(z[i][j]);
-        }
 
         for (int j = 0; j < V + 1; j++)
         {
@@ -122,35 +152,48 @@ int main()
     }
 
     //POSICAO
-    for (int i = 0; i < V + 1; i++)
+    for (int i = 0; i < V; i++)
     {
         IloExpr sum(env);
-        for (int j = 0; j < nTrabalhos + 1; j++)
+        for (int j = 0; j < nTrabalhos; j++)
         {
             sum += z[i][j];
         }
         model.add(y[i] == sum);
     }
 
-    for (int i = 0; i < nTrabalhos + 1; i++)
+    for (int i = 0; i < V; i++)
     {
-        IloExpr sum(env);
-        for (int j = 0; j < V + 1; j++)
+        for (int j = 0; j < V; j++)
         {
-            sum += z[j][i];
+            if (i == j)
+                continue;
+            for (int p = 0; p < nTrabalhos - 1; p++)
+            {
+                model.add(u[i][j][p] <= z[i][p]);
+                model.add(u[i][j][p] <= z[j][p + 1]);
+                model.add(u[i][j][p] >= z[i][p] + z[j][p + 1] - 1);
+            }
         }
-        model.add(sum == 1);
     }
 
-    // for (int i = 0; i < V; i++)
-    // {
-    //     IloExpr sum(env);
-    //     for (int j = 0; j < nTrabalhos; j++)
-    //     {
-    //         sum += y[j];
-    //     }
-    //     model.add(sum == 1);
-    // }
+    for (int i = 0; i < V; i++)
+    {
+        for (int j = 0; j < V; j++)
+        {
+            IloExpr sum(env);
+
+            if (i == j)
+                continue;
+
+            for (int p = 0; p < nTrabalhos - 1; p++)
+            {
+                sum += u[i][j][p];
+            }
+
+            model.add(x[i][j] == sum);
+        }
+    }
 
     // GRAU
     {
@@ -239,9 +282,51 @@ int main()
                 sum += y[j];
             }
         }
-        model.add(sum >= 1);
+        model.add(sum >= 2);
         model.add(sum <= 4);
         cout << " - " << i << " \n";
+    }
+
+    // OBLITERAÇÃO DE GAPS
+
+    for (int i = 0; i < nProfessores; i++)
+    {
+
+        for (int k = 0; k < nTrabalhos; k++)
+        {
+            IloExpr sum(env);
+
+            for (int j = 0; j < V; j++)
+            {
+                vector<int> v1 = padraoInverso[j];
+                if (v1[0] == i || v1[1] == i || v1[2] == i)
+                {
+                    sum += z[j][k];
+                }
+            }
+
+            model.add(l[i][k] == sum);
+        }
+    }
+
+    int gapSize = 3;
+
+    for (int i = 0; i < nProfessores; i++)
+    {
+        for (int p = 0; p < nTrabalhos; p++)
+        {
+            for (int pn = p + gapSize; pn < nTrabalhos; pn++)
+            {
+                IloExpr sum(env);
+
+                for (int j = p + 1; j < pn - 1; j++)
+                {
+                    sum += l[i][j];
+                }
+
+                model.add(l[i][p] - sum + l[i][pn] <= 1);
+            }
+        }
     }
 
     IloCplex ENICTOP(model);
@@ -273,9 +358,10 @@ int main()
 
     cout << "\n";
 
-    for (int i = 0; i < V + 1; i++)
+    for (int i = 0; i < V; i++)
     {
-        for (int j = 0; j < nTrabalhos + 1; j++)
+        cout << i << " - ";
+        for (int j = 0; j < nTrabalhos; j++)
         {
             cout << ENICTOP.getValue(z[i][j]) << " ";
         }
