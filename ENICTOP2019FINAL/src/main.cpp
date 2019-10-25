@@ -125,12 +125,12 @@ int main()
     }
 
     //TODO TRABALHO TEM QUE TER 3 KBA
-    for(int t = 0; t < nTrabalhos; t++)
+    for (int t = 0; t < nTrabalhos; t++)
     {
         IloExpr sum(env);
-        for(int i = 0; i < nProfessores; i++)
+        for (int i = 0; i < nProfessores; i++)
         {
-            for(int s = 0; s < nTrabalhos; s++)
+            for (int s = 0; s < nTrabalhos; s++)
             {
                 sum += x[i][t][s];
             }
@@ -139,7 +139,40 @@ int main()
     }
 
     // O MONSTRO
-    
+    int gapSize = 1;
+
+    for (int i = 0; i < nProfessores; i++)
+    {
+        for (int s = 0; s < nTrabalhos; s++)
+        {
+            for (int sn = s + gapSize; sn < nTrabalhos; sn++)
+            {
+                for (int t = 0; t < nTrabalhos; t++)
+                {
+                    for (int t1 = 0; t1 < nTrabalhos; t1++)
+                    {
+                        if (t1 == t)
+                            continue;
+
+                        IloExpr sum(env);
+
+                        for (int t2 = 0; t2 < nTrabalhos; t2++)
+                        {
+                            if (t2 == t1 || t2 == t)
+                                continue;
+
+                            for (int k = s + 1; k < sn - 1; k++)
+                            {
+                                sum += x[i][t2][k];
+                            }
+                        }
+
+                        model.add(x[i][t][s] - sum + x[i][t1][sn] >= 2 * y[i][t][sn - s]);
+                    }
+                }
+            }
+        }
+    }
 
     IloCplex ENICTOP(model);
 
