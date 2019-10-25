@@ -15,9 +15,9 @@ using namespace std;
 
 int main()
 {
-    int nTrabalhos = 5, nProfessores = 4;
+    int nTrabalhos = 6, nProfessores = 5;
     int A = 0;
-    vector<int> trabalhoOrientador = {0, 0, 1, 2, 3};
+    vector<int> trabalhoOrientador = {0, 0, 1, 2, 3, 4};
     vector<vector<vector<vector<int>>>> padraoIndice(nTrabalhos, vector<vector<vector<int>>>(nProfessores, vector<vector<int>>(nProfessores, vector<int>(nProfessores))));
     vector<vector<int>> padraoInverso(nTrabalhos * ((nProfessores - 1) * (nProfessores - 1) / 2 - (nProfessores - 1) / 2), vector<int>(4, -1));
     int V = padraoInverso.size();
@@ -46,6 +46,13 @@ int main()
 
             for (int s = 0; s < nTrabalhos; s++)
             {
+                char var1[100], var2[100];
+
+                sprintf(var1, "X(%d,%d,%d)", i, t, s);
+                x[i][t][s].setName(var1);
+                sprintf(var2, "Y(%d,%d,%d)", i, t, s);
+                y[i][t][s].setName(var2);
+
                 model.add(x[i][t][s]);
                 model.add(y[i][t][s]);
             }
@@ -59,6 +66,24 @@ int main()
         {
             model.add(u[t][s]);
         }
+    }
+
+    // FO
+    {
+        IloExpr sum(env);
+
+        for (int i = 0; i < nProfessores; i++)
+        {
+            for (int t = 0; t < nTrabalhos; t++)
+            {
+                for (int s = 0; s < nTrabalhos; s++)
+                {
+                    sum += y[i][t][s];
+                }
+            }
+        }
+
+        model.add(IloMinimize(env, sum));
     }
 
     // ASSIGNMENT TOP
@@ -111,7 +136,7 @@ int main()
         }
     }
 
-    // ORIENTADOR E OBRIGADO A TAR NO TRABALHO LA
+    // ORIENTADOR E OBRIGADO A ESTAR NO PROPRIO TRABALHO
     for (int t = 0; t < nTrabalhos; t++)
     {
         int i = trabalhoOrientador[t];
@@ -138,14 +163,33 @@ int main()
         model.add(sum == 3);
     }
 
+    // 2 A 4 TRABALHOS
+
+    for (int i = 0; i < nProfessores; i++)
+    {
+        IloExpr sum(env);
+        for (int t = 0; t < nTrabalhos; t++)
+        {
+            if (trabalhoOrientador[t] != i)
+            {
+                for (int s = 0; s < nTrabalhos; s++)
+                {
+                    sum += x[i][t][s];
+                }
+            }
+        }
+        model.add(sum <= 4);
+        model.add(sum >= 2);
+    }
+
     // O MONSTRO
-    int gapSize = 1;
+    int gapSize = 2;
 
     for (int i = 0; i < nProfessores; i++)
     {
         for (int s = 0; s < nTrabalhos; s++)
         {
-            for (int sn = s + gapSize; sn < nTrabalhos; sn++)
+            for (int sn = s + 2; sn < nTrabalhos; sn++)
             {
                 for (int t = 0; t < nTrabalhos; t++)
                 {
@@ -161,13 +205,13 @@ int main()
                             if (t2 == t1 || t2 == t)
                                 continue;
 
-                            for (int k = s + 1; k < sn - 1; k++)
+                            for (int k = s + 1; k <= sn - 1; k++)
                             {
                                 sum += x[i][t2][k];
                             }
                         }
 
-                        model.add(x[i][t][s] - sum + x[i][t1][sn] >= 2 * y[i][t][sn - s]);
+                        model.add(x[i][t][s] - sum + x[i][t1][sn] - 1 <= y[i][t1][sn - s - 1]);
                     }
                 }
             }
@@ -176,7 +220,12 @@ int main()
 
     IloCplex ENICTOP(model);
 
+    ENICTOP.exportModel("A.lp");
+
     ENICTOP.solve();
+
+    vector<vector<int>> solucao(nTrabalhos);
+    vector<int> ordemTrabalhos(nTrabalhos);
 
     for (int i = 0; i < nProfessores; i++)
     {
@@ -185,6 +234,30 @@ int main()
             for (int s = 0; s < nTrabalhos; s++)
             {
                 if (ENICTOP.getValue(x[i][t][s]) > 0.9)
+                {
+                    // cout << i << " " << t << " " << s << "\n";
+                    solucao[s].push_back(i);
+                    ordemTrabalhos[s] = t;
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < nTrabalhos; i++)
+    {
+        vector<int> v = solucao[i];
+        cout << v[0] << " " << v[1] << " " << v[2] << " - " << ordemTrabalhos[i] << "\n";
+    }
+
+    cout << "\n";
+
+    for (int i = 0; i < nProfessores; i++)
+    {
+        for (int t = 0; t < nTrabalhos; t++)
+        {
+            for (int s = 0; s < nTrabalhos; s++)
+            {
+                if (ENICTOP.getValue(y[i][t][s]) > 0.9)
                 {
                     cout << i << " " << t << " " << s << "\n";
                 }
