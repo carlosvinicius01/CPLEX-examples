@@ -15,9 +15,9 @@ using namespace std;
 
 void createModel(int maxSkip);
 
-int nTrabalhos = 5, nProfessores = 4;
+int nTrabalhos = 6, nProfessores = 6;
 // int A = 0;
-vector<int> trabalhoOrientador = {0, 0, 1, 2, 3};
+vector<int> trabalhoOrientador = {0, 1, 2, 3, 4, 5};
 
 int main()
 {
