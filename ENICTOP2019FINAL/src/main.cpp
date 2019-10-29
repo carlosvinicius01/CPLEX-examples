@@ -17,12 +17,13 @@ void createModel(int maxSkip);
 
 void p_cluster();
 
-int nTrabalhos = 12, nProfessores = 12;
+int nTrabalhos = 11, nProfessores = 11;
 // int A = 0;
-vector<int> trabalhoOrientador = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+vector<int> trabalhoOrientador = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
 int main()
 {
+    srand(time(NULL));
     p_cluster();
 
     // vector<vector<vector<vector<int>>>> padraoIndice(nTrabalhos, vector<vector<vector<int>>>(nProfessores, vector<vector<int>>(nProfessores, vector<int>(nProfessores))));
@@ -588,7 +589,19 @@ void p_cluster()
 {
     int N = 12;
     int n = 2;
+    int nProfessores = 10;
     vector<vector<float>> c(N, vector<float>(N));
+    vector<vector<int>> Ti = {{0, 10}, {2, 3}, {4}, {5}, {6}, {7}, {8}, {9}, {1}, {11}};
+
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            c[i][j] = rand() % 50;
+            cout << c[i][j] << " ";
+        }
+        cout << "\n";
+    }
 
     IloEnv env;
     IloModel model(env);
@@ -626,19 +639,36 @@ void p_cluster()
     {
         IloExpr sum(env);
 
-        for(int i = 0; i < N; i++)
+        for (int i = 0; i < N; i++)
         {
-            for(int j = i + 1; j < N; j++)
+            for (int j = i + 1; j < N; j++)
             {
-                for(int k = 0; k < n; k++)
+                for (int k = 0; k < n; k++)
                 {
-                    sum += w[i][j][k];
+                    sum += c[i][j] * w[i][j][k];
+                }
+            }
+        }
+
+        model.add(IloMaximize(env, sum));
+    }
+
+    // RESTRIÇÕES
+
+    for (int t = 0; t < n; t++)
+    {
+        for (int i = 0; i < nProfessores; i++)
+        {
+            for (int j = 0; j < Ti[i].size(); j++)
+            {
+                for (int k = j + 1; k < Ti[i].size(); k++)
+                {
+                    model.add(z[Ti[i][j]][t] == z[Ti[i][k]][t]);
                 }
             }
         }
     }
 
-    // RESTRIÇÕES
     {
         IloExpr sum(env);
 
@@ -674,5 +704,19 @@ void p_cluster()
             sum += z[i][k];
         }
         model.add(sum >= 1);
+        model.add(sum <= 6);
+    }
+
+    IloCplex CLUST_TOP(model);
+
+    CLUST_TOP.solve();
+
+    for (int k = 0; k < n; k++)
+    {
+        for (int i = 0; i < N; i++)
+        {
+            cout << CLUST_TOP.getValue(z[i][k]) << " ";
+        }
+        cout << "\n";
     }
 }
