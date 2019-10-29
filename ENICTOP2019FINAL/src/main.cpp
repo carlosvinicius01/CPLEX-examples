@@ -15,281 +15,294 @@ using namespace std;
 
 void createModel(int maxSkip);
 
-int nTrabalhos = 6, nProfessores = 6;
+void p_cluster();
+
+int nTrabalhos = 12, nProfessores = 12;
 // int A = 0;
-vector<int> trabalhoOrientador = {0, 1, 2, 3, 4, 5};
+vector<int> trabalhoOrientador = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 
 int main()
 {
-    vector<vector<vector<vector<int>>>> padraoIndice(nTrabalhos, vector<vector<vector<int>>>(nProfessores, vector<vector<int>>(nProfessores, vector<int>(nProfessores))));
-    vector<vector<int>> padraoInverso(nTrabalhos * ((nProfessores - 1) * (nProfessores - 1) / 2 - (nProfessores - 1) / 2), vector<int>(4, -1));
-    int V = padraoInverso.size();
-    vector<vector<double>> c(V + 1, vector<double>(V + 1, 0));
+    p_cluster();
 
-    IloEnv env;
-    IloModel model(env);
+    // vector<vector<vector<vector<int>>>> padraoIndice(nTrabalhos, vector<vector<vector<int>>>(nProfessores, vector<vector<int>>(nProfessores, vector<int>(nProfessores))));
+    // vector<vector<int>> padraoInverso(nTrabalhos * ((nProfessores - 1) * (nProfessores - 1) / 2 - (nProfessores - 1) / 2), vector<int>(4, -1));
+    // int V = padraoInverso.size();
+    // vector<vector<double>> c(V + 1, vector<double>(V + 1, 0));
 
-    IloArray<IloArray<IloBoolVarArray>> x(env, nProfessores);
-    IloArray<IloArray<IloBoolVarArray>> y(env, nProfessores);
+    // IloEnv env;
+    // IloModel model(env);
 
-    IloArray<IloBoolVarArray> v(env, nProfessores);
-    IloArray<IloBoolVarArray> u(env, nTrabalhos);
+    // IloArray<IloArray<IloBoolVarArray>> x(env, nProfessores);
+    // IloArray<IloArray<IloBoolVarArray>> y(env, nProfessores);
 
-    IloIntVar h_max(env, 0, nTrabalhos);
+    // IloArray<IloBoolVarArray> v(env, nProfessores);
+    // IloArray<IloBoolVarArray> u(env, nTrabalhos);
 
-    model.add(h_max);
+    // IloIntVar h_max(env, 0, nTrabalhos);
 
-    for (int i = 0; i < nProfessores; i++)
-    {
-        x[i] = IloArray<IloBoolVarArray>(env, nTrabalhos);
-        y[i] = IloArray<IloBoolVarArray>(env, nTrabalhos);
-        v[i] = IloBoolVarArray(env, nTrabalhos);
+    // {
+    //     char var5[100];
+    //     sprintf(var5, "h");
+    //     h_max.setName(var5);
 
-        for (int t = 0; t < nTrabalhos; t++)
-        {
-            x[i][t] = IloBoolVarArray(env, nTrabalhos);
-            y[i][t] = IloBoolVarArray(env, nTrabalhos);
-            model.add(v[i][t]);
+    //     model.add(h_max);
+    // }
+    // for (int i = 0; i < nProfessores; i++)
+    // {
+    //     x[i] = IloArray<IloBoolVarArray>(env, nTrabalhos);
+    //     y[i] = IloArray<IloBoolVarArray>(env, nTrabalhos);
+    //     v[i] = IloBoolVarArray(env, nTrabalhos);
 
-            for (int s = 0; s < nTrabalhos; s++)
-            {
-                char var1[100], var2[100];
+    //     for (int t = 0; t < nTrabalhos; t++)
+    //     {
+    //         x[i][t] = IloBoolVarArray(env, nTrabalhos);
+    //         y[i][t] = IloBoolVarArray(env, nTrabalhos);
+    //         model.add(v[i][t]);
 
-                sprintf(var1, "X(%d,%d,%d)", i, t, s);
-                x[i][t][s].setName(var1);
-                sprintf(var2, "Y(%d,%d,%d)", i, t, s);
-                y[i][t][s].setName(var2);
+    //         for (int s = 0; s < nTrabalhos; s++)
+    //         {
+    //             char var1[100], var2[100];
 
-                model.add(x[i][t][s]);
-                model.add(y[i][t][s]);
-            }
-        }
-    }
+    //             sprintf(var1, "X(%d,%d,%d)", i, t, s);
+    //             x[i][t][s].setName(var1);
+    //             sprintf(var2, "Y(%d,%d,%d)", i, t, s);
+    //             y[i][t][s].setName(var2);
 
-    for (int t = 0; t < nTrabalhos; t++)
-    {
-        u[t] = IloBoolVarArray(env, nTrabalhos);
-        for (int s = 0; s < nTrabalhos; s++)
-        {
-            model.add(u[t][s]);
-        }
-    }
+    //             model.add(x[i][t][s]);
+    //             model.add(y[i][t][s]);
+    //         }
+    //     }
+    // }
 
-    // FO
-    {
-        // IloExpr sum(env);
+    // for (int t = 0; t < nTrabalhos; t++)
+    // {
+    //     u[t] = IloBoolVarArray(env, nTrabalhos);
+    //     for (int s = 0; s < nTrabalhos; s++)
+    //     {
+    //         model.add(u[t][s]);
+    //     }
+    // }
 
-        // for (int i = 0; i < nProfessores; i++)
-        // {
-        //     for (int t = 0; t < nTrabalhos; t++)
-        //     {
-        //         for (int s = 0; s < nTrabalhos; s++)
-        //         {
-        //             sum += s * y[i][t][s];
-        //         }
-        //     }
-        // }
+    // // FO
+    // {
+    //     // IloExpr sum(env);
 
-        // model.add(IloMinimize(env, sum));
+    //     // for (int i = 0; i < nProfessores; i++)
+    //     // {
+    //     //     for (int t = 0; t < nTrabalhos; t++)
+    //     //     {
+    //     //         for (int s = 0; s < nTrabalhos; s++)
+    //     //         {
+    //     //             sum += s * y[i][t][s];
+    //     //         }
+    //     //     }
+    //     // }
 
-        model.add(IloMinimize(env, h_max));
-    }
+    //     // model.add(IloMinimize(env, sum));
 
-    // SALTO MAXIMO
-    for (int i = 0; i < nProfessores; i++)
-    {
-        for (int t = 0; t < nTrabalhos; t++)
-        {
-            for (int s = 0; s < nTrabalhos; s++)
-            {
-                model.add(h_max >= s * y[i][t][s]);
-            }
-        }
-    }
+    //     model.add(IloMinimize(env, h_max));
+    // }
 
-    // ASSIGNMENT TOP
-    for (int t = 0; t < nTrabalhos; t++)
-    {
-        IloExpr sum(env);
-        for (int s = 0; s < nTrabalhos; s++)
-        {
-            sum += u[t][s];
-        }
-        model.add(sum == 1);
-    }
+    // // SALTO MAXIMO
+    // for (int i = 0; i < nProfessores; i++)
+    // {
+    //     for (int t = 0; t < nTrabalhos; t++)
+    //     {
+    //         for (int s = 0; s < nTrabalhos; s++)
+    //         {
+    //             model.add(h_max >= s * y[i][t][s]);
+    //         }
+    //     }
+    // }
 
-    for (int s = 0; s < nTrabalhos; s++)
-    {
-        IloExpr sum(env);
-        for (int t = 0; t < nTrabalhos; t++)
-        {
-            sum += u[t][s];
-        }
-        model.add(sum == 1);
-    }
+    // // ASSIGNMENT TOP
+    // for (int t = 0; t < nTrabalhos; t++)
+    // {
+    //     IloExpr sum(env);
+    //     for (int s = 0; s < nTrabalhos; s++)
+    //     {
+    //         sum += u[t][s];
+    //     }
+    //     model.add(sum == 1);
+    // }
 
-    //AQUELA LINEARIZAÇÃO LA
-    for (int s = 0; s < nTrabalhos; s++)
-    {
-        for (int t = 0; t < nTrabalhos; t++)
-        {
-            IloExpr sum(env);
-            for (int i = 0; i < nProfessores; i++)
-            {
-                model.add(u[t][s] >= x[i][t][s]);
-                sum += x[i][t][s];
-            }
-            model.add(u[t][s] <= sum);
-        }
-    }
+    // for (int s = 0; s < nTrabalhos; s++)
+    // {
+    //     IloExpr sum(env);
+    //     for (int t = 0; t < nTrabalhos; t++)
+    //     {
+    //         sum += u[t][s];
+    //     }
+    //     model.add(sum == 1);
+    // }
 
-    for (int s = 0; s < nTrabalhos; s++)
-    {
-        for (int i = 0; i < nProfessores; i++)
-        {
-            IloExpr sum(env);
-            for (int t = 0; t < nTrabalhos; t++)
-            {
-                model.add(v[i][s] >= x[i][t][s]);
-                sum += x[i][t][s];
-            }
-            model.add(v[i][s] <= sum);
-        }
-    }
+    // //AQUELA LINEARIZAÇÃO LA
+    // for (int s = 0; s < nTrabalhos; s++)
+    // {
+    //     for (int t = 0; t < nTrabalhos; t++)
+    //     {
+    //         IloExpr sum(env);
+    //         for (int i = 0; i < nProfessores; i++)
+    //         {
+    //             model.add(u[t][s] >= x[i][t][s]);
+    //             sum += x[i][t][s];
+    //         }
+    //         model.add(u[t][s] <= sum);
+    //     }
+    // }
 
-    // ORIENTADOR E OBRIGADO A ESTAR NO PROPRIO TRABALHO
-    for (int t = 0; t < nTrabalhos; t++)
-    {
-        int i = trabalhoOrientador[t];
-        IloExpr sum(env);
+    // for (int s = 0; s < nTrabalhos; s++)
+    // {
+    //     for (int i = 0; i < nProfessores; i++)
+    //     {
+    //         IloExpr sum(env);
+    //         for (int t = 0; t < nTrabalhos; t++)
+    //         {
+    //             char var3[100];
+    //             sprintf(var3, "v(%d,%d)", i, s);
+    //             v[i][s].setName(var3);
 
-        for (int s = 0; s < nTrabalhos; s++)
-        {
-            sum += x[i][t][s];
-        }
-        model.add(sum == 1);
-    }
+    //             model.add(v[i][s] >= x[i][t][s]);
+    //             sum += x[i][t][s];
+    //         }
+    //         model.add(v[i][s] <= sum);
+    //     }
+    // }
 
-    //TODO TRABALHO TEM QUE TER 3 KBA
-    for (int t = 0; t < nTrabalhos; t++)
-    {
-        IloExpr sum(env);
-        for (int i = 0; i < nProfessores; i++)
-        {
-            for (int s = 0; s < nTrabalhos; s++)
-            {
-                sum += x[i][t][s];
-            }
-        }
-        model.add(sum == 3);
-    }
+    // // ORIENTADOR E OBRIGADO A ESTAR NO PROPRIO TRABALHO
+    // for (int t = 0; t < nTrabalhos; t++)
+    // {
+    //     int i = trabalhoOrientador[t];
+    //     IloExpr sum(env);
 
-    // 2 A 4 TRABALHOS
+    //     for (int s = 0; s < nTrabalhos; s++)
+    //     {
+    //         sum += x[i][t][s];
+    //     }
+    //     model.add(sum == 1);
+    // }
 
-    for (int i = 0; i < nProfessores; i++)
-    {
-        IloExpr sum(env);
-        for (int t = 0; t < nTrabalhos; t++)
-        {
-            if (trabalhoOrientador[t] != i)
-            {
-                for (int s = 0; s < nTrabalhos; s++)
-                {
-                    sum += x[i][t][s];
-                }
-            }
-        }
-        model.add(sum <= 4);
-        model.add(sum >= 2);
-    }
+    // //TODO TRABALHO TEM QUE TER 3 KBA
+    // for (int t = 0; t < nTrabalhos; t++)
+    // {
+    //     IloExpr sum(env);
+    //     for (int i = 0; i < nProfessores; i++)
+    //     {
+    //         for (int s = 0; s < nTrabalhos; s++)
+    //         {
+    //             sum += x[i][t][s];
+    //         }
+    //     }
+    //     model.add(sum == 3);
+    // }
 
-    // O MONSTRO
-    int gapSize = 2;
+    // // 2 A 4 TRABALHOS
 
-    for (int i = 0; i < nProfessores; i++)
-    {
-        for (int s = 0; s < nTrabalhos; s++)
-        {
-            for (int sn = s + 2; sn < nTrabalhos; sn++)
-            {
-                for (int t = 0; t < nTrabalhos; t++)
-                {
-                    for (int t1 = 0; t1 < nTrabalhos; t1++)
-                    {
-                        if (t1 == t)
-                            continue;
+    // for (int i = 0; i < nProfessores; i++)
+    // {
+    //     IloExpr sum(env);
+    //     for (int t = 0; t < nTrabalhos; t++)
+    //     {
+    //         if (trabalhoOrientador[t] != i)
+    //         {
+    //             for (int s = 0; s < nTrabalhos; s++)
+    //             {
+    //                 sum += x[i][t][s];
+    //             }
+    //         }
+    //     }
+    //     model.add(sum <= 4);
+    //     model.add(sum >= 2);
+    // }
 
-                        IloExpr sum(env);
+    // // O MONSTRO
+    // int gapSize = 2;
 
-                        for (int t2 = 0; t2 < nTrabalhos; t2++)
-                        {
-                            if (t2 == t1 || t2 == t)
-                                continue;
+    // for (int i = 0; i < nProfessores; i++)
+    // {
+    //     for (int s = 0; s < nTrabalhos; s++)
+    //     {
+    //         for (int sn = s + 2; sn < nTrabalhos; sn++)
+    //         {
+    //             for (int t = 0; t < nTrabalhos; t++)
+    //             {
+    //                 for (int t1 = 0; t1 < nTrabalhos; t1++)
+    //                 {
+    //                     if (t1 == t)
+    //                         continue;
 
-                            for (int k = s + 1; k <= sn - 1; k++)
-                            {
-                                sum += x[i][t2][k];
-                            }
-                        }
+    //                     IloExpr sum(env);
 
-                        model.add(x[i][t][s] - sum + x[i][t1][sn] - 1 <= y[i][t1][sn - s - 1]);
-                    }
-                }
-            }
-        }
-    }
+    //                     for (int t2 = 0; t2 < nTrabalhos; t2++)
+    //                     {
+    //                         if (t2 == t1 || t2 == t)
+    //                             continue;
 
-    IloCplex ENICTOP(model);
+    //                         for (int k = s + 1; k <= sn - 1; k++)
+    //                         {
+    //                             sum += x[i][t2][k];
+    //                         }
+    //                     }
 
-    ENICTOP.exportModel("A.lp");
+    //                     model.add(x[i][t][s] - sum + x[i][t1][sn] - 1 <= y[i][t1][sn - s - 1]);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
-    ENICTOP.solve();
+    // IloCplex ENICTOP(model);
 
-    vector<vector<int>> solucao(nTrabalhos);
-    vector<int> ordemTrabalhos(nTrabalhos);
+    // ENICTOP.exportModel("A.lp");
 
-    for (int i = 0; i < nProfessores; i++)
-    {
-        for (int t = 0; t < nTrabalhos; t++)
-        {
-            for (int s = 0; s < nTrabalhos; s++)
-            {
-                if (ENICTOP.getValue(x[i][t][s]) > 0.9)
-                {
-                    // cout << i << " " << t << " " << s << "\n";
-                    solucao[s].push_back(i);
-                    ordemTrabalhos[s] = t;
-                }
-            }
-        }
-    }
+    // ENICTOP.solve();
 
-    for (int i = 0; i < nTrabalhos; i++)
-    {
-        vector<int> v = solucao[i];
-        cout << v[0] << " " << v[1] << " " << v[2] << " - " << ordemTrabalhos[i] << "\n";
-    }
+    // vector<vector<int>> solucao(nTrabalhos);
+    // vector<int> ordemTrabalhos(nTrabalhos);
 
-    cout << "\n";
+    // for (int i = 0; i < nProfessores; i++)
+    // {
+    //     for (int t = 0; t < nTrabalhos; t++)
+    //     {
+    //         for (int s = 0; s < nTrabalhos; s++)
+    //         {
+    //             if (ENICTOP.getValue(x[i][t][s]) > 0.9)
+    //             {
+    //                 // cout << i << " " << t << " " << s << "\n";
+    //                 solucao[s].push_back(i);
+    //                 ordemTrabalhos[s] = t;
+    //             }
+    //         }
+    //     }
+    // }
 
-    for (int i = 0; i < nProfessores; i++)
-    {
-        for (int t = 0; t < nTrabalhos; t++)
-        {
-            for (int s = 0; s < nTrabalhos; s++)
-            {
-                if (ENICTOP.getValue(y[i][t][s]) > 0.9)
-                {
-                    cout << i << " " << t << " " << s << "\n";
-                }
-            }
-        }
-    }
+    // for (int i = 0; i < nTrabalhos; i++)
+    // {
+    //     vector<int> v = solucao[i];
+    //     cout << v[0] << " " << v[1] << " " << v[2] << " - " << ordemTrabalhos[i] << "\n";
+    // }
 
-    if (ENICTOP.getValue(h_max) > 0)
-    {
-        createModel(ENICTOP.getValue(h_max));
-    }
+    // cout << "\n";
+
+    // for (int i = 0; i < nProfessores; i++)
+    // {
+    //     for (int t = 0; t < nTrabalhos; t++)
+    //     {
+    //         for (int s = 0; s < nTrabalhos; s++)
+    //         {
+    //             if (ENICTOP.getValue(y[i][t][s]) > 0.9)
+    //             {
+    //                 cout << i << " " << t << " " << s << "\n";
+    //             }
+    //         }
+    //     }
+    // }
+
+    // if (ENICTOP.getValue(h_max) > 0)
+    // {
+    //     createModel(ENICTOP.getValue(h_max));
+    // }
 }
 
 void createModel(int maxSkip)
@@ -339,6 +352,10 @@ void createModel(int maxSkip)
         u[t] = IloBoolVarArray(env, nTrabalhos);
         for (int s = 0; s < nTrabalhos; s++)
         {
+            char var4[100];
+            sprintf(var4, "v(%d,%d)", t, s);
+            u[t][s].setName(var4);
+
             model.add(u[t][s]);
         }
     }
@@ -564,5 +581,98 @@ void createModel(int maxSkip)
                 }
             }
         }
+    }
+}
+
+void p_cluster()
+{
+    int N = 12;
+    int n = 2;
+    vector<vector<float>> c(N, vector<float>(N));
+
+    IloEnv env;
+    IloModel model(env);
+
+    IloArray<IloArray<IloBoolVarArray>> w(env, N);
+    IloArray<IloBoolVarArray> z(env, N);
+
+    for (int i = 0; i < N; i++)
+    {
+        w[i] = IloArray<IloBoolVarArray>(env, N);
+        for (int j = 0; j < N; j++)
+        {
+            w[i][j] = IloBoolVarArray(env, n);
+            for (int k = 0; k < n; k++)
+            {
+                char var[100];
+                sprintf(var, "w(%d,%d,%d)", i, j, k);
+                w[i][j][k].setName(var);
+            }
+        }
+    }
+
+    for (int i = 0; i < N; i++)
+    {
+        z[i] = IloBoolVarArray(env, n);
+        for (int k = 0; k < n; k++)
+        {
+            char var[100];
+            sprintf(var, "z(%d,%d)", i, k);
+            z[i][k].setName(var);
+        }
+    }
+
+    // FO!
+    {
+        IloExpr sum(env);
+
+        for(int i = 0; i < N; i++)
+        {
+            for(int j = i + 1; j < N; j++)
+            {
+                for(int k = 0; k < n; k++)
+                {
+                    sum += w[i][j][k];
+                }
+            }
+        }
+    }
+
+    // RESTRIÇÕES
+    {
+        IloExpr sum(env);
+
+        for (int i = 0; i < N; i++)
+        {
+            for (int j = i + 1; j < N; j++)
+            {
+                for (int k = 0; k < n; k++)
+                {
+                    model.add(w[i][j][k] + 1 >= z[i][k] + z[j][k]);
+                    model.add(w[i][j][k] <= z[i][k]);
+                    model.add(w[i][j][k] <= z[j][k]);
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < N; i++)
+    {
+        IloExpr sum(env);
+        for (int k = 0; k < n; k++)
+        {
+            sum += z[i][k];
+        }
+        model.add(sum == 1);
+    }
+
+    for (int k = 0; k < n; k++)
+    {
+        IloExpr sum(env);
+        for (int i = 0; i < N; i++)
+        {
+            sum += z[i][k];
+        }
+        model.add(sum >= 1);
     }
 }

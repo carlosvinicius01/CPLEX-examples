@@ -1,0 +1,10 @@
+
+Log for 'A.lp' Clone_1 (V12.7.0.0) Tue Oct 29 16:48:21 2019
+
+Tried aggregator 0 times.
+No LP presolve or aggregator reductions.
+Presolve time = 0.33 sec. (165.99 ticks)
+Barrier time = 0.52 sec. (483.65 ticks)
+
+Primal simplex solved model.
+
