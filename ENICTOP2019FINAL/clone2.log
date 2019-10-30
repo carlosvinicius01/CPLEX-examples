@@ -10,3 +10,29 @@ Reinitializing dual norms . . .
 
 Primal simplex solved model.
 
+
+Log for 'A.lp' Clone_2 (V12.7.0.0) Wed Oct 30 20:54:51 2019
+
+
+Iteration log . . .
+Iteration:     1   Scaled dual infeas =           972.999999
+Iteration:    94   Scaled dual infeas =            10.999966
+Perturbation started.
+Iteration:   202   Scaled dual infeas =            10.999999
+Iteration:   334   Scaled dual infeas =            10.999963
+Iteration:   437   Scaled dual infeas =             9.287361
+Iteration:   559   Scaled dual infeas =             8.748829
+Iteration:   668   Scaled dual infeas =             7.897981
+Iteration:   775   Scaled dual infeas =             6.880512
+Iteration:   881   Scaled dual infeas =             5.380573
+Iteration:   965   Scaled dual infeas =             4.471076
+Iteration:  1060   Scaled dual infeas =             3.380869
+Iteration:  1159   Scaled dual infeas =             2.381256
+Iteration:  1246   Scaled dual infeas =             1.648354
+Iteration:  1333   Scaled dual infeas =             1.005237
+Iteration:  1424   Scaled dual infeas =             0.577727
+Iteration:  1518   Scaled dual infeas =             0.232823
+Removing perturbation.
+
+Barrier solved model.
+

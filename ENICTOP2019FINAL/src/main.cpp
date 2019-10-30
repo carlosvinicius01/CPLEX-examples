@@ -17,9 +17,9 @@ void createModel(int maxSkip, bool faz);
 
 void p_cluster();
 
-int nTrabalhos = 12, nProfessores = 6;
+int nTrabalhos = 12, nProfessores = 7;
 // int A = 0;
-vector<int> trabalhoOrientador = {0, 0, 0, 1, 2, 2, 3, 3, 4, 5, 5, 5};
+vector<int> trabalhoOrientador = {0,0,0,0,0,0,1,2,3,4,5,6};
 
 int main()
 {

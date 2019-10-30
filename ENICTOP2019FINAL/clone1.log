@@ -8,3 +8,89 @@ Barrier time = 0.52 sec. (483.65 ticks)
 
 Primal simplex solved model.
 
+
+Log for 'A.lp' Clone_1 (V12.7.0.0) Wed Oct 30 20:54:51 2019
+
+Tried aggregator 0 times.
+Reduced presolve eliminated 0 rows and 77 columns.
+Reduced LP has 1307 rows, 8149 columns, and 25598 nonzeros.
+Presolve time = 0.00 sec. (3.15 ticks)
+Symmetry aggregator did 8738 additional substitutions.
+Tried aggregator 0 times.
+Reduced presolve eliminated 0 rows and 84 columns.
+Reduced LP has 129 rows, 505 columns, and 1593 nonzeros.
+Presolve time = 0.00 sec. (0.22 ticks)
+Parallel mode: using up to 6 threads for barrier.
+Number of nonzeros in lower triangle of A*A' = 2731
+Using Approximate Minimum Degree ordering
+Total time for automatic ordering = 0.00 sec. (0.16 ticks)
+Summary statistics for Cholesky factor:
+  Threads                   = 6
+  Rows in Factor            = 129
+  Integer space required    = 418
+  Total non-zeros in factor = 4218
+  Total FP ops to factor    = 160008
+ Itn      Primal Obj        Dual Obj  Prim Inf Upper Inf  Dual Inf Inf Ratio
+   0  -1.0680447e+04   0.0000000e+00  5.48e+03  0.00e+00  5.81e+05  1.00e+00
+   1  -4.2086263e+02   5.2766137e+00  2.43e+02  0.00e+00  1.73e+03  4.46e-03
+   2  -3.5184970e+01   5.0865247e+00  1.90e+01  0.00e+00  9.93e+01  1.74e-01
+   3   1.2679850e-01   2.0681267e+00  8.03e-01  0.00e+00  5.74e+00  6.86e+00
+   4  -2.2438557e-02   1.1387948e-02  1.26e-02  0.00e+00  9.50e-02  1.19e+03
+   5  -3.0927632e-06   2.9209507e-06  1.55e-06  0.00e+00  5.22e-05  5.76e+06
+   6  -6.2080643e-10   2.1451263e-10  2.16e-10  0.00e+00  7.37e-09  1.15e+11
+   7  -7.7531203e-14   1.9837971e-14  3.06e-14  0.00e+00  1.32e-12  1.79e+15
+Barrier time = 0.02 sec. (1.54 ticks)
+
+Total time on 6 threads = 0.07 sec. (113.34 ticks)
+Barrier time = 0.06 sec. (10.63 ticks)
+
+Log for 'A.lp' Clone_1 (V12.7.0.0) Wed Oct 30 20:54:52 2019
+
+
+Primal crossover.
+  Primal:  Fixing 89 variables.
+       88 PMoves:  Infeasibility  0.00000000e+00  Objective -7.10542736e-15
+        0 PMoves:  Infeasibility  0.00000000e+00  Objective  0.00000000e+00
+  Primal:  Pushed 76, exchanged 13.
+  Dual:  Fixing 1045 variables.
+     1044 DMoves:  Infeasibility  4.84125130e+00  Objective  0.00000000e+00
+Parallel mode: deterministic, using up to 6 threads for concurrent optimization.
+
+Dual crossover.
+  Dual:  Fixing 1050 variables.
+     1049 DMoves:  Infeasibility  8.60422844e-16  Objective  0.00000000e+00
+      664 DMoves:  Infeasibility  4.34840122e+00  Objective  0.00000000e+00
+      826 DMoves:  Infeasibility  6.93889390e-16  Objective  0.00000000e+00
+      387 DMoves:  Infeasibility  4.34840122e+00  Objective  0.00000000e+00
+      498 DMoves:  Infeasibility  6.93889390e-16  Objective  0.00000000e+00
+      147 DMoves:  Infeasibility  4.34840122e+00  Objective  0.00000000e+00
+      307 DMoves:  Infeasibility  6.93889390e-16  Objective  0.00000000e+00
+      128 DMoves:  Infeasibility  6.93889390e-16  Objective  0.00000000e+00
+       45 DMoves:  Infeasibility  2.45170466e+00  Objective  0.00000000e+00
+        0 DMoves:  Infeasibility  2.24291498e+00  Objective  0.00000000e+00
+  Dual:  Pushed 519, exchanged 526.
+       43 DMoves:  Infeasibility  8.32667268e-16  Objective  0.00000000e+00
+
+Iteration log . . .
+Iteration:     1    Objective     =             0.000000
+        0 DMoves:  Infeasibility  9.15162748e-15  Objective  0.00000000e+00
+  Dual:  Pushed 459, exchanged 591.
+  Primal:  Fixing 89 variables.
+       88 PMoves:  Infeasibility  2.77555756e-17  Objective -7.10542736e-15
+        0 PMoves:  Infeasibility  1.35724765e-14  Objective -2.58126853e-15
+  Primal:  Pushed 76, exchanged 13.
+Iteration:    73    Objective     =             0.000000
+Reinitializing dual norms . . .
+
+Dual simplex solved model.
+
+
+Dual simplex solved model.
+
+Total crossover time = 0.02 sec. (20.64 ticks)
+
+Total time on 6 threads = 0.09 sec. (134.50 ticks)
+Reinitializing dual norms . . .
+
+Barrier solved model.
+
