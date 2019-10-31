@@ -19,7 +19,7 @@ void p_cluster();
 
 int nTrabalhos = 12, nProfessores = 7;
 // int A = 0;
-vector<int> trabalhoOrientador = {0,0,0,0,0,0,1,2,3,4,5,6};
+vector<int> trabalhoOrientador = {0,0,0,0,0,0, 1, 2, 3, 4, 5, 6};
 
 int main()
 {
@@ -411,10 +411,12 @@ void createModel(int maxSkip, bool faz)
             IloExpr sum(env);
             for (int i = 0; i < nProfessores; i++)
             {
-                model.add(u[t][s] >= x[i][t][s]);
-                sum += x[i][t][s];
+                // model.add(u[t][s] >= x[i][t][s]);
+                // sum += x[i][t][s];
+
+                model.add(x[i][t][s] <= u[t][s]);
             }
-            model.add(u[t][s] <= sum);
+            // model.add(u[t][s] <= sum);
         }
     }
 

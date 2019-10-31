@@ -36,3 +36,23 @@ Removing perturbation.
 
 Barrier solved model.
 
+
+Log for 'A.lp' Clone_2 (V12.7.0.0) Wed Oct 30 21:04:58 2019
+
+
+Iteration log . . .
+Iteration:     1   Scaled dual infeas =          1132.999999
+Iteration:   110   Scaled dual infeas =            10.999960
+Iteration:   219   Scaled dual infeas =             8.626887
+Iteration:   349   Scaled dual infeas =             7.082150
+Iteration:   459   Scaled dual infeas =             5.600444
+Iteration:   551   Scaled dual infeas =             4.607010
+Iteration:   660   Scaled dual infeas =             3.803984
+Iteration:   756   Scaled dual infeas =             2.729305
+Iteration:   859   Scaled dual infeas =             2.091005
+Iteration:   958   Scaled dual infeas =             1.104060
+Iteration:  1063   Scaled dual infeas =             0.527412
+Iteration:  1156   Scaled dual infeas =             0.143126
+
+Barrier solved model.
+
