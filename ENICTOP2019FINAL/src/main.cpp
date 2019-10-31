@@ -17,15 +17,19 @@ void createModel(int maxSkip, bool faz);
 
 void p_cluster();
 
-int nTrabalhos = 12, nProfessores = 7;
+void o_novo();
+
+int nTrabalhos = 6, nProfessores = 4, nSlots = 6;
 // int A = 0;
-vector<int> trabalhoOrientador = {0,0,0,0,0,0, 1, 2, 3, 4, 5, 6};
+vector<int> trabalhoOrientador = {0, 1, 2, 3, 3, 3};
 
 int main()
 {
     srand(time(NULL));
 
-    createModel(0, false);
+    // createModel(0, false);
+
+    o_novo();
 
     // p_cluster();
 
@@ -715,4 +719,124 @@ void p_cluster()
         }
         cout << "\n";
     }
+}
+
+void o_novo()
+{
+    IloEnv env;
+    IloModel model(env);
+
+    IloArray<IloBoolVarArray> x(env, nProfessores);
+    IloArray<IloIntVarArray> h(env, nProfessores);
+    IloArray<IloBoolVarArray> l(env, nProfessores);
+
+    for (int i = 0; i < nProfessores; i++)
+    {
+        x[i] = IloBoolVarArray(env, nSlots + 1);
+        h[i] = IloIntVarArray(env, nSlots + 1, 0, nSlots);
+        l[i] = IloBoolVarArray(env, nSlots + 1);
+
+        for (int s = 0; s < nSlots + 1; s++)
+        {
+            model.add(h[i][s]);
+        }
+        for (int s = 1; s < nSlots + 1; s++)
+        {
+            model.add(l[i][s]);
+            model.add(x[i][s]);
+        }
+    }
+
+    IloNumVar h_max(env, 0, nSlots);
+
+    //FO
+    {
+        model.add(IloMinimize(env, h_max));
+    }
+
+    for (int s = 1; s < nSlots + 1; s++)
+    {
+        IloExpr sum(env);
+        for (int i = 0; i < nProfessores; i++)
+        {
+            sum += x[i][s];
+        }
+
+        model.add(sum == 3);
+    }
+
+    for (int i = 0; i < nProfessores; i++)
+    {
+        IloExpr sum(env);
+        for (int s = 1; s < nSlots + 1; s++)
+        {
+            sum += x[i][s];
+        }
+
+        model.add(sum <= 5);
+        model.add(sum >= 2);
+    }
+
+    for (int i = 0; i < nProfessores; i++)
+    {
+        for (int s = 1; s < nSlots + 1; s++)
+        {
+            IloExpr sum(env);
+            for (int s1 = 0; s1 <= s - 1; s1++)
+            {
+                sum += x[i][s1];
+            }
+
+            model.add(h[i][s] >= h[i][s - 1] + ((double)1.0 / nSlots) * sum - nSlots * x[i][s] + l[i][s] - 1);
+        }
+    }
+
+    for (int i = 0; i < nProfessores; i++)
+    {
+        for (int s = 1; s < nSlots + 1; s++)
+        {
+            for (int s1 = s + 1; s1 < nSlots; s1++)
+            {
+                model.add(l[i][s] >= x[i][s1]);
+            }
+        }
+    }
+
+    for (int i = 0; i < nProfessores; i++)
+    {
+        for (int s = 1; s < nSlots + 1; s++)
+        {
+            model.add(h_max >= h[i][s]);
+        }
+        model.add(h[i][0] == 0);
+    }
+
+    IloCplex ENICTOP(model);
+
+    ENICTOP.solve();
+
+    vector<vector<int>> solucao(nSlots);
+    vector<int> ordemTrabalhos(nSlots);
+
+    cout << "\n" << ENICTOP.getObjValue() << "\n";
+
+    for (int i = 0; i < nProfessores; i++)
+    {
+        for (int s = 1; s < nSlots + 1; s++)
+        {
+            if (ENICTOP.getValue(x[i][s]) > 0.9)
+            {
+                solucao[s - 1].push_back(i);
+                ordemTrabalhos[s - 1] = s;
+            }
+        }
+    }
+
+    for (int i = 0; i < nTrabalhos; i++)
+    {
+        vector<int> v = solucao[i];
+        cout << v[0] << " " << v[1] << " " << v[2] << " - " << ordemTrabalhos[i] << "\n";
+    }
+
+    cout << "\n\n";
 }
