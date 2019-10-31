@@ -23,9 +23,9 @@ void alocaTrabalho(vector<vector<int>> &slotProf);
 void alocaTrabalha2(vector<vector<int>> &slotProf);
 
 int nTrabalhos = 12, nProfessores = 7, nSlots = 12;
-vector<int> trabalhosOrientador = {6, 1, 1, 1, 1, 1, 1};
-vector<int> trabalhoOrientador = {0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6};
-vector<vector<int>> trabProfessor = {{0, 1, 2, 3, 4, 5}, {6}, {7}, {8}, {9}, {10}, {11}};
+vector<int> trabalhosOrientador = {5, 2, 1, 1, 1, 1, 1};
+vector<int> trabalhoOrientador = {0, 0, 0, 0, 0, 1, 1, 2, 3, 4, 5, 6};
+vector<vector<int>> trabProfessor = {{0, 1, 2, 3, 4}, {5, 6}, {7}, {8}, {9}, {10}, {11}};
 
 vector<vector<int>> slotProf(nProfessores);
 
@@ -887,7 +887,7 @@ void o_novo(int &min_h, bool faz)
             slotProf[i].push_back(i);
         }
 
-        sort(slotProf.begin(), slotProf.end(), [](const vector<int> &a, const vector<int> &b) { return a.size() < b.size(); });
+        // sort(slotProf.begin(), slotProf.end(), [](const vector<int> &a, const vector<int> &b) { return a.size() < b.size(); });
 
         for (int i = 0; i < nProfessores; i++)
         {
@@ -899,38 +899,38 @@ void o_novo(int &min_h, bool faz)
             cout << "\n";
         }
 
-        // alocaTrabalho(slotProf);
+        alocaTrabalho(slotProf);
 
-        vector<int> ordemTrabalhos(nSlots, -1);
+        // vector<int> ordemTrabalhos(nSlots, -1);
 
-        for (int s = 0; s < nSlots; s++)
-        {
-            if (ordemTrabalhos[s] == -1)
-            {
-                for (int a = 0; a < nProfessores; a++)
-                {
-                    int i = slotProf[a][slotProf[a].size() - 1];
+        // for (int s = 0; s < nSlots; s++)
+        // {
+        //     if (ordemTrabalhos[s] == -1)
+        //     {
+        //         for (int a = 0; a < nProfessores; a++)
+        //         {
+        //             int i = slotProf[a][slotProf[a].size() - 1];
 
-                    if (trabProfessor[i].size() == 0)
-                        continue;
+        //             if (trabProfessor[i].size() == 0)
+        //                 continue;
 
-                    if (find(slotProf[a].begin(), slotProf[a].end() - 1, s) == slotProf[a].end() - 1)
-                        continue;
+        //             if (find(slotProf[a].begin(), slotProf[a].end() - 1, s) == slotProf[a].end() - 1)
+        //                 continue;
 
-                    int t = trabProfessor[i][0];
-                    trabProfessor[i].erase(trabProfessor[i].begin());
-                    ordemTrabalhos[s] = t;
-                    break;
-                }
-            }
-        }
+        //             int t = trabProfessor[i][0];
+        //             trabProfessor[i].erase(trabProfessor[i].begin());
+        //             ordemTrabalhos[s] = t;
+        //             break;
+        //         }
+        //     }
+        // }
 
-        cout << "\n";
+        // cout << "\n";
 
-        for (int s = 0; s < nSlots; s++)
-        {
-            cout << ordemTrabalhos[s] << "\n";
-        }
+        // for (int s = 0; s < nSlots; s++)
+        // {
+        //     cout << ordemTrabalhos[s] << "\n";
+        // }
     }
 }
 
@@ -1018,6 +1018,7 @@ void alocaTrabalho(vector<vector<int>> &slotProf)
 
     for (int i = 0; i < ordemTrabalhos.size(); i++)
     {
+        cout << ordemTrabalhos[i] << "\n";
     }
 }
 
