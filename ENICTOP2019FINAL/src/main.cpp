@@ -17,19 +17,22 @@ void createModel(int maxSkip, bool faz);
 
 void p_cluster();
 
-void o_novo();
+void o_novo(int &min_h, bool faz);
 
-int nTrabalhos = 6, nProfessores = 4, nSlots = 6;
-// int A = 0;
-vector<int> trabalhoOrientador = {0, 1, 2, 3, 3, 3};
+int nTrabalhos = 12, nProfessores = 7, nSlots = 12;
+vector<int> trabalhosOrientador = {5, 2, 1, 1, 1, 1, 1};
 
+vector<int> trabalhoOrientador = {0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6};
 int main()
 {
     srand(time(NULL));
 
     // createModel(0, false);
 
-    o_novo();
+    int h_min;
+    
+    o_novo(h_min, false);
+    o_novo(h_min, true);
 
     // p_cluster();
 
@@ -721,7 +724,7 @@ void p_cluster()
     }
 }
 
-void o_novo()
+void o_novo(int &min_h, bool faz)
 {
     IloEnv env;
     IloModel model(env);
@@ -733,7 +736,7 @@ void o_novo()
     for (int i = 0; i < nProfessores; i++)
     {
         x[i] = IloBoolVarArray(env, nSlots + 1);
-        h[i] = IloIntVarArray(env, nSlots + 1, 0, nSlots);
+        h[i] = IloIntVarArray(env, nSlots + 1, 0, !faz * nSlots + faz * min_h);
         l[i] = IloBoolVarArray(env, nSlots + 1);
 
         for (int s = 0; s < nSlots + 1; s++)
@@ -750,7 +753,23 @@ void o_novo()
     IloNumVar h_max(env, 0, nSlots);
 
     //FO
+    if (faz)
     {
+        IloExpr sum(env);
+
+        for (int i = 0; i < nProfessores; i++)
+        {
+            for (int s = 1; s < nSlots + 1; s++)
+            {
+                sum += h[i][s];
+            }
+        }
+
+        model.add(IloMinimize(env, sum));
+    }
+    else
+    {
+
         model.add(IloMinimize(env, h_max));
     }
 
@@ -773,8 +792,8 @@ void o_novo()
             sum += x[i][s];
         }
 
-        model.add(sum <= 5);
-        model.add(sum >= 2);
+        model.add(sum <= trabalhosOrientador[i] + 4);
+        model.add(sum >= trabalhosOrientador[i] + 2);
     }
 
     for (int i = 0; i < nProfessores; i++)
@@ -782,7 +801,7 @@ void o_novo()
         for (int s = 1; s < nSlots + 1; s++)
         {
             IloExpr sum(env);
-            for (int s1 = 0; s1 <= s - 1; s1++)
+            for (int s1 = 1; s1 <= s - 1; s1++)
             {
                 sum += x[i][s1];
             }
@@ -795,7 +814,7 @@ void o_novo()
     {
         for (int s = 1; s < nSlots + 1; s++)
         {
-            for (int s1 = s + 1; s1 < nSlots; s1++)
+            for (int s1 = s + 1; s1 < nSlots + 1; s1++)
             {
                 model.add(l[i][s] >= x[i][s1]);
             }
@@ -818,7 +837,8 @@ void o_novo()
     vector<vector<int>> solucao(nSlots);
     vector<int> ordemTrabalhos(nSlots);
 
-    cout << "\n" << ENICTOP.getObjValue() << "\n";
+    cout << "\n"
+         << ENICTOP.getObjValue() << "\n";
 
     for (int i = 0; i < nProfessores; i++)
     {
@@ -839,4 +859,9 @@ void o_novo()
     }
 
     cout << "\n\n";
+
+    if(!faz)
+    {
+        min_h = ENICTOP.getObjValue();
+    }
 }
