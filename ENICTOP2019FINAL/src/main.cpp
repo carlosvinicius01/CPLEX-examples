@@ -456,9 +456,9 @@ void p_cluster()
 
 void geradorEstruturas(int &tS, int &nT, int &nP, int &nS, vector<int> &trabOrient, vector<int> &NP, vector<vector<int>> &TO)
 {
-    tS = 3;
-    trabOrient = {0, 0, 0, 1, 2, 3, 3, 3, 3, 4};
-    maxTrabalhos = {7, 5, 5, 8, 5};
+    tS = 5;
+    trabOrient = {0, 0, 1, 1, 2, 2, 3, 4, 5, 6};
+    maxTrabalhos = {9, 7, 7, 7, 7, 7, 6};
 
     nT = nS = (int)trabOrient.size();
 
@@ -531,6 +531,18 @@ void o_novo(int &min_h, bool faz)
         model.add(IloMinimize(env, h_max));
     }
 
+    // O SALTO MAXIMO E 1 MESMO EU ACHO
+    if (faz)
+    {
+        for (int s = 2; s < nSlots + 1; s++)
+        {
+            for (int i = 0; i < nProfessores; i++)
+            {
+                model.add(h[i][s] <= 1);
+            }
+        }
+    }
+
     for (int s = 1; s < nSlots + 1; s++)
     {
         IloExpr sum(env);
@@ -551,7 +563,7 @@ void o_novo(int &min_h, bool faz)
         }
 
         model.add(sum == maxTrabalhos[i]);
-        // model.add(sum <= trabalhosOrientador[i] + 5);
+        // model.add(sum <= trabalhosOrientador[i] + 4);
         // model.add(sum >= trabalhosOrientador[i] + 2);
     }
 
