@@ -38,12 +38,13 @@ int main()
     srand(time(NULL));
     geradorEstruturas(tamanhoSlot, nTrabalhos, nProfessores, nSlots, trabalhoOrientador, trabalhosOrientador, trabProfessor);
 
-    // createModel(0, false);
+    createModel(0, false);
+    // createModel();
 
-    int h_min;
+    // int h_min;
 
-    o_novo(h_min, false);
-    o_novo(h_min, true);
+    // o_novo(h_min, false);
+    // o_novo(h_min, true);
 }
 
 void createModel(int maxSkip, bool faz)
@@ -198,8 +199,8 @@ void createModel(int maxSkip, bool faz)
                 }
             }
         }
-        model.add(sum <= 4);
-        model.add(sum >= 2);
+        model.add(sum <= maxTrabalhos[i] + 4);
+        model.add(sum >= maxTrabalhos[i]);
     }
 
     // O MONSTRO 2
@@ -456,9 +457,9 @@ void p_cluster()
 
 void geradorEstruturas(int &tS, int &nT, int &nP, int &nS, vector<int> &trabOrient, vector<int> &NP, vector<vector<int>> &TO)
 {
-    tS = 5;
-    trabOrient = {0, 0, 1, 1, 2, 2, 3, 4, 5, 6};
-    maxTrabalhos = {9, 7, 7, 7, 7, 7, 6};
+    tS = 3;
+    trabOrient = {0, 1, 2, 2, 3, 4, 5, 6, 7, 8};
+    maxTrabalhos = {1, 1, 2, 1, 1, 1, 1, 1, 1};
 
     nT = nS = (int)trabOrient.size();
 
@@ -488,12 +489,32 @@ void o_novo(int &min_h, bool faz)
     IloModel model(env);
 
     IloArray<IloBoolVarArray> x(env, nProfessores);
+    IloArray<IloBoolVarArray> y(env, nTrabalhos);
+    IloArray<IloBoolVarArray> z(env, nProfessores);
+
     IloArray<IloIntVarArray> h(env, nProfessores);
     IloArray<IloBoolVarArray> l(env, nProfessores);
+
+    for (int t = 0; t < nTrabalhos; t++)
+    {
+        y[t] = IloBoolVarArray(env, nSlots + 1);
+
+        for (int s = 1; s < nSlots + 1; s++)
+        {
+            model.add(y[t][s]);
+        }
+    }
 
     for (int i = 0; i < nProfessores; i++)
     {
         x[i] = IloBoolVarArray(env, nSlots + 1);
+        z[i] = IloBoolVarArray(env, nSlots + 1);
+
+        for (int t = 0; t < nTrabalhos; t++)
+        {
+            model.add(z[i][t]);
+        }
+
         h[i] = IloIntVarArray(env, nSlots + 1, 0, !faz * nSlots + faz * min_h);
         l[i] = IloBoolVarArray(env, nSlots + 1);
 
@@ -557,15 +578,28 @@ void o_novo(int &min_h, bool faz)
     for (int i = 0; i < nProfessores; i++)
     {
         IloExpr sum(env);
-        for (int s = 1; s < nSlots + 1; s++)
+        for (int t = 0; t < nTrabalhos; t++)
         {
-            sum += x[i][s];
+            sum += z[i][t];
         }
 
-        model.add(sum == maxTrabalhos[i]);
-        // model.add(sum <= trabalhosOrientador[i] + 4);
-        // model.add(sum >= trabalhosOrientador[i] + 2);
+        // model.add(sum == maxTrabalhos[i]);
+        model.add(sum <= trabalhosOrientador[i] + 4);
+        model.add(sum >= trabalhosOrientador[i]);
     }
+
+    // for (int i = 0; i < nProfessores; i++)
+    // {
+    //     IloExpr sum(env);
+    //     for (int s = 1; s < nSlots + 1; s++)
+    //     {
+    //         sum += x[i][s];
+    //     }
+
+    //     model.add(sum == maxTrabalhos[i]);
+    //     // model.add(sum <= trabalhosOrientador[i] + 4);
+    //     // model.add(sum >= trabalhosOrientador[i] + 2);
+    // }
 
     for (int i = 0; i < nProfessores; i++)
     {
@@ -599,6 +633,49 @@ void o_novo(int &min_h, bool faz)
             model.add(h_max >= h[i][s]);
         }
         model.add(h[i][0] == 0);
+    }
+
+    //VERSAO ATUALIZADA
+
+    for (int t = 0; t < nTrabalhos; t++)
+    {
+        IloExpr sum(env);
+        for (int s = 1; s < nSlots + 1; s++)
+        {
+            sum += y[t][s];
+        }
+        model.add(sum == 1);
+    }
+
+    for (int s = 1; s < nSlots + 1; s++)
+    {
+        IloExpr sum(env);
+        for (int t = 0; t < nTrabalhos; t++)
+        {
+            sum += y[t][s];
+        }
+        model.add(sum == 1);
+    }
+
+    for (int t = 0; t < nTrabalhos; t++)
+    {
+        for (int s = 1; s < nSlots + 1; s++)
+        {
+            IloExpr sum(env);
+            for (int i = 0; i < nProfessores; i++)
+            {
+                sum += z[i][t] * x[i][s];
+            }
+            model.add(3 * y[t][s] <= sum);
+        }
+    }
+
+    for (int i = 0; i < nProfessores; i++)
+    {
+        for (auto &t : trabProfessor[i])
+        {
+            model.add(z[i][t] == 1);
+        }
     }
 
     IloCplex ENICTOP(model);
