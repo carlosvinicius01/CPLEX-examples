@@ -52,5 +52,8 @@
         "ciN+1ttypes": "cpp",
         "typeiN+1dex": "cpp",
         "striN+1g": "cpp"
+    },
+    "files.associations": {
+        "vector": "cpp"
     }
 }
