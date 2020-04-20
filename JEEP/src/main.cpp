@@ -29,7 +29,8 @@ int main()
         }
     }
 
-    // c[4][3] = 2;
+    c[1][4] = 10;
+    c[4][1] = 10;
 
     for (int i = 0; i <= n + 1; i++)
     {
@@ -46,6 +47,8 @@ int main()
     IloBoolVarArray y(env, n + 2);
     for (int i = 0; i < n + 2; i++)
     {
+        string name = ("y" + to_string(i));
+        y[i].setName(name.c_str());
         model.add(y[i]);
     }
 
@@ -57,6 +60,8 @@ int main()
         {
             if (i != j)
             {
+                string name = ("x" + to_string(i) + to_string(j));
+                x[i][j].setName(name.c_str());
                 model.add(x[i][j]);
             }
         }
@@ -69,7 +74,11 @@ int main()
         for (int j = 0; j < n + 2; j++)
         {
             if (i != j)
+            {
+                string name = ("z" + to_string(i) + to_string(j));
+                z[i][j].setName(name.c_str());
                 model.add(z[i][j]);
+            }
         }
     }
 
@@ -81,6 +90,8 @@ int main()
         {
             if (i != j)
             {
+                string name = ("f" + to_string(i) + to_string(j));
+                f[i][j].setName(name.c_str());
                 model.add(f[i][j]);
             }
         }
@@ -89,26 +100,37 @@ int main()
     {
         IloExpr sum(env);
 
+        for (int i = 1; i < n + 1; i++)
+        {
+            sum += y[i];
+        }
+        model.add(IloMaximize(env, sum));
+
         // for (int i = 1; i < n + 1; i++)
         // {
-        //     sum += y[i];
+        //     for (int j = 1; j < n + 1; j++)
+        //     {
+        //         if (i != j)
+        //             sum += z[i][j];
+        //     }
         // }
-        // model.add(IloMaximize(env, sum));
+        // model.add(IloMinimize(env, sum));
+
+        model.add(y[0] == 1);
+        // for (int i = 1; i < n + 1; i++)
+        //     model.add(y[i] == 1);
+        model.add(y[n + 1] == 1);
+    }
+
+    {
+        IloExpr sum(env);
 
         for (int i = 1; i < n + 1; i++)
         {
-            for (int j = 1; j < n + 1; j++)
-            {
-                if (i != j)
-                    sum += z[i][j];
-            }
+            sum += y[i];
         }
-        model.add(IloMinimize(env, sum));
 
-        model.add(y[0] == 1);
-        for (int i = 1; i < n + 1; i++)
-            model.add(y[i] == 1);
-        model.add(y[n + 1] == 1);
+        // model.add(sum == 3);
     }
 
     // ARCO ENTRA
@@ -200,7 +222,9 @@ int main()
                         sum2 += f[k][j];
                 }
 
-                model.add(M * z[i][j] >= sum1 - sum2 + 1);
+                IloConstraint c1(M * z[i][j] >= sum1 - sum2 + 1);
+                c1.setName("doideira_1");
+                model.add(c1);
             }
         }
     }
@@ -208,30 +232,39 @@ int main()
 
     // de novo nao aaa
     // desgraça do inferno
-    for (int i = 1; i < n + 1; i++)
+    for (int i = 0, l = 0; i < n + 2; i++)
     {
-        for (int j = 1; j < n + 1; j++)
+        for (int j = 0; j < n + 2; j++, l++)
         {
-            IloExpr sum1(env), sum2(env);
-
-            for (int k = 1; k < n + 1; k++)
+            if (i != j)
             {
-                if (j == k)
-                    sum1 += z[k][j];
-            }
+                IloExpr sum1(env), sum2(env);
 
-            for (int k = 1; k < n + 1; k++)
-            {
-                if (i == k)
-                    sum2 += z[k][i];
-            }
+                for (int k = 0; k < n + 2; k++)
+                {
+                    if (j != k)
+                        sum1 += z[k][j];
+                }
 
-            model.add(sum1 - sum2 - 1 >= c[i][j] - M * (1 - z[i][j]));
+                for (int k = 0; k < n + 2; k++)
+                {
+                    if (i != k)
+                        sum2 += z[k][i];
+                }
+
+                IloConstraint c1(sum1 - sum2 - 1 >= c[i][j] - M * (1 - z[i][j]) - M * (1 - y[i]) - M * (1 - y[j]));
+                c1.setName(string("doideira_2" + to_string(l)).c_str());
+
+                model.add(c1);
+            }
         }
     }
     // e nois?
 
     IloCplex JEEP(model);
+
+    JEEP.exportModel("modelo.lp");
+
     JEEP.solve();
 
     cout << "Obj value: " << JEEP.getObjValue() << "\n\n";
@@ -241,17 +274,31 @@ int main()
     //     cout << JEEP.getValue(y[i]) << "\n";
     // }
 
-    for (int i = 0; i < n + 1; i++)
+    vector<int> s = {0};
+
+    while (1)
     {
+        int a = s[s.size() - 1];
+        if (a == n + 1)
+            break;
         for (int j = 1; j < n + 2; j++)
         {
-            if (i != j)
+            if (a != j)
             {
-                if (JEEP.getValue(x[i][j]) > 0.9)
-                    cout << i << ", " << j << "\n";
+                if (JEEP.getValue(x[a][j]) > 0.9)
+                {
+                    s.push_back(j);
+                    break;
+                }
             }
         }
     }
+    for (int i = 0; i < s.size(); i++)
+    {
+        cout << s[i] << " ";
+    }
+
+    cout << "\n";
 
     cout << "\n";
 

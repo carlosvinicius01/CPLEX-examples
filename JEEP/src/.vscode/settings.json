@@ -54,6 +54,7 @@
         "striN+1g": "cpp"
     },
     "files.associations": {
-        "vector": "cpp"
+        "vector": "cpp",
+        "deque": "cpp"
     }
 }
