@@ -11,26 +11,33 @@
 
 #include <stdlib.h>
 
-#define M 1000
-
 using namespace std;
 
 int main()
 {
     vector<vector<int>> c;
-    int n = 7;
+    int n = 6;
+    int M = 1000;
 
     for (int i = 0; i <= n + 1; i++)
     {
         c.push_back(vector<int>());
         for (int j = 0; j <= n + 1; j++)
         {
-            c[i].push_back(0);
+            if (i == 0)
+                c[i].push_back(0);
+            else
+                c[i].push_back(0);
         }
     }
 
-    c[1][4] = 10;
-    c[4][1] = 10;
+    //olha ai essa mizera
+
+    c[5][2] = 5;
+    c[2][5] = 5;
+    // c[1][4] = 5;
+    // c[4][1] = 5;
+
 
     for (int i = 0; i <= n + 1; i++)
     {
@@ -130,7 +137,7 @@ int main()
             sum += y[i];
         }
 
-        // model.add(sum == 3);
+        // model.add(sum == 2);
     }
 
     // ARCO ENTRA
@@ -200,7 +207,10 @@ int main()
     for (int i = 1; i < n + 2; i++)
     {
         model.add(z[0][i] == 1);
+        model.add(z[i][0] == 0);
+
         model.add(z[i - 1][n + 1] == 1);
+        model.add(z[n + 1][i - 1] == 0);
     }
 
     for (int i = 1; i < n + 1; i++)
@@ -211,23 +221,36 @@ int main()
 
             if (i != j)
             {
-                for (int k = 1; k < n + 2; k++)
+                for (int k = 0; k < n + 2; k++)
                 {
                     if (k != i)
-                        sum1 += f[i][k];
+                        sum1 += f[k][i];
                 }
-                for (int k = 0; k < n + 1; k++)
+                for (int k = 0; k < n + 2; k++)
                 {
                     if (k != j)
                         sum2 += f[k][j];
                 }
 
-                IloConstraint c1(M * z[i][j] >= sum1 - sum2 + 1);
+                IloConstraint c1(M * z[i][j] >= sum1 - sum2);
                 c1.setName("doideira_1");
                 model.add(c1);
+                // model.add(z[i][j] <= y[i]);
+                // model.add(z[i][j] <= y[j]);
             }
         }
     }
+    //nem a pau movei
+
+    for (int i = 1; i < n + 1; i++)
+    {
+        for (int j = i + 1; j < n + 1; j++)
+        {
+            model.add(z[i][j] == 1 - z[j][i]);
+        }
+    }
+
+    // vo mata um esa mizera cacete
     // da-lhee eita
 
     // de novo nao aaa
@@ -269,10 +292,13 @@ int main()
 
     cout << "Obj value: " << JEEP.getObjValue() << "\n\n";
 
-    // for(int i = 1; i < n+1;i++)
-    // {
-    //     cout << JEEP.getValue(y[i]) << "\n";
-    // }
+    cout << "y: ";
+    for (int i = 0; i < n + 2; i++)
+    {
+        cout << JEEP.getValue(y[i]) << " ";
+    }
+
+    cout << "\n\n";
 
     vector<int> s = {0};
 
