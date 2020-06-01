@@ -2,7 +2,9 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import random
 
-f = open("solutions/solucoes2.txt", 'r')
+print("a")
+
+f = open("solutions/solucoes.txt", 'r')
 
 num_slots = 12
 
@@ -69,8 +71,6 @@ for session in session_list:
 
     prof_patch_list = []
 
-    print(av_dict)
-
     for k,v in color_dict.items():
         prof_patch = patches.Patch(color=v, label= "Orientações: " + str(orient_dict[k]) + ", Avaliações: " + str(av_dict[k]))
         prof_patch_list.append(prof_patch)
@@ -80,7 +80,7 @@ for session in session_list:
     plt.ylim((0,num_slots))
     plt.xlim((0,3))
     # plt.show()
-    plt.savefig(str(num_slots) + "_" + str(session_index) + ".png")
+    plt.savefig("plotted_solutions/" + str(num_slots) + "_" + str(session_index) + ".png")
 
     session_index = session_index + 1
 
