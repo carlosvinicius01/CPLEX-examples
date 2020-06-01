@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import random
 
-print("a")
 
 f = open("solutions/solucoes.txt", 'r')
 
