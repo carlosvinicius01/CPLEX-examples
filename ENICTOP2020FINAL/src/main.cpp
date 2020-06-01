@@ -154,7 +154,7 @@ void CreateModel(vector<int> &num_examinations_professor, vector<int> &num_works
     CSE.solve();
 
     // cout << CSE.getStatus() << "\n";
-    cout << "Obj Value: " << CSE.getObjValue() << "\n";
+    // cout << "Obj Value: " << CSE.getObjValue() << "\n";
 
     vector<vector<int>> solution(num_slots);
 
@@ -194,16 +194,18 @@ void CreateModel(vector<int> &num_examinations_professor, vector<int> &num_works
 int main()
 {
     int seed = time(NULL);
-    cout << "Seed: " << seed << "\n";
+    // cout << "Seed: " << seed << "\n";
     srand(seed);
 
-    while (1)
+    int k = 4;
+    while (k--)
     {
+        // cout << "\n";
 
-        cout << "################################################\n";
+        // cout << "################################################\n";
 
         int examiners_per_slot = 3;
-        int num_slots = 10;
+        int num_slots = 12;
         int num_professors = 0;
         vector<int> num_examinations_professor;
         vector<int> num_works_professor;
@@ -212,7 +214,7 @@ int main()
             int num_presentations = 0;
             int max_presentations = examiners_per_slot * num_slots;
 
-            int max_works_per_professor = 10;
+            int max_works_per_professor = 12;
 
             while (num_presentations < max_presentations)
             {
@@ -275,22 +277,22 @@ int main()
                 }
             }
 
-            for (int i = 0; i < num_examinations_professor.size(); i++)
-            {
-                cout << i << " " << num_works_professor[i] << " - " << num_examinations_professor[i] << "\n";
-            }
+            // for (int i = 0; i < num_examinations_professor.size(); i++)
+            // {
+            //     cout << i << " " << num_works_professor[i] << " - " << num_examinations_professor[i] << "\n";
+            // }
 
-            a = 0;
-            for (int i = 0; i < num_works_professor.size(); i++)
-            {
-                a += num_works_professor[i];
-            }
+            // a = 0;
+            // for (int i = 0; i < num_works_professor.size(); i++)
+            // {
+            //     a += num_works_professor[i];
+            // }
             // cout << "\n"
             //      << a << "\n";
         }
 
         CreateModel(num_examinations_professor, num_works_professor, num_professors, num_slots);
 
-        cout << "################################################\n";
+        // cout << "################################################\n";
     }
 }
