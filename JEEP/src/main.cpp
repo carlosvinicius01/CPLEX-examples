@@ -16,28 +16,29 @@ using namespace std;
 int main()
 {
     vector<vector<int>> c;
-    int n = 6;
+    int n = 10;
     int M = 1000;
+
+    srand(time(NULL));
 
     for (int i = 0; i <= n + 1; i++)
     {
         c.push_back(vector<int>());
         for (int j = 0; j <= n + 1; j++)
         {
-            if (i == 0)
+            if (i == 0 || j == n + 1)
                 c[i].push_back(0);
             else
-                c[i].push_back(0);
+                c[i].push_back(rand()%10);
         }
     }
 
     //olha ai essa mizera
 
-    c[5][2] = 5;
-    c[2][5] = 5;
-    // c[1][4] = 5;
+    //c[5][2] = 5;
+    //c[2][5] = 5;
+    //c[1][4] = 5;
     // c[4][1] = 5;
-
 
     for (int i = 0; i <= n + 1; i++)
     {
@@ -49,6 +50,8 @@ int main()
     }
 
     IloEnv env;
+    // env.setOut(env.getNullStream());
+
     IloModel model(env);
 
     IloBoolVarArray y(env, n + 2);
@@ -221,12 +224,12 @@ int main()
 
             if (i != j)
             {
-                for (int k = 0; k < n + 2; k++)
+                for (int k = 0; k < n + 1; k++)
                 {
                     if (k != i)
                         sum1 += f[k][i];
                 }
-                for (int k = 0; k < n + 2; k++)
+                for (int k = 0; k < n + 1; k++)
                 {
                     if (k != j)
                         sum2 += f[k][j];
@@ -235,6 +238,7 @@ int main()
                 IloConstraint c1(M * z[i][j] >= sum1 - sum2);
                 c1.setName("doideira_1");
                 model.add(c1);
+                model.add(M * (1 - z[i][j]) >= sum2 - sum1);
                 // model.add(z[i][j] <= y[i]);
                 // model.add(z[i][j] <= y[j]);
             }
@@ -374,5 +378,18 @@ int main()
             }
         }
         cout << "\n";
+    }
+
+    //CHECA
+    for (int i = 1; i < s.size() - 1; i++)
+    {
+        for (int j = i + 1; j < s.size() - 1; j++)
+        {
+            if (j - i - 1 < c[s[i]][s[j]])
+            {
+                cout << "ta errado\n";
+                cout << i << ", " << j << "\n";
+            }
+        }
     }
 }
